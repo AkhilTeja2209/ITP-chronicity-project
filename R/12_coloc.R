@@ -26,7 +26,9 @@ file_header <- function(src) {
   header_cache[[src]]
 }
 tabix <- function(src, region, cwd = getwd()) {
-  out <- withr::with_dir(cwd, suppressWarnings(system2("tabix", c(shQuote(src), region), stdout = TRUE, stderr = FALSE)))
+  err <- tempfile()
+  out <- withr::with_dir(cwd, suppressWarnings(system2("tabix", c(shQuote(src), region), stdout = TRUE, stderr = err)))
+  if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(head(readLines(err, warn = FALSE), 3), collapse = " | "))
   out <- sub("\r$", "", out)
   if (!length(out)) return(NULL)
   fread(text = out, sep = "\t", header = FALSE, col.names = file_header(src), na.strings = c("NA", ""))
@@ -38,16 +40,17 @@ for (i in seq_len(nrow(loci))) {
   L <- loci[i]
   region <- sprintf("%s:%d-%d", L$chr, as.integer(L$start), as.integer(L$end))
   gr <- tabix(gw$file, region)
-  if (is.null(gr)) next
+  if (is.null(gr)) { msg(L$locus, ": no GWAS rows returned by tabix"); next }
   gr <- gr[is.finite(beta) & is.finite(standard_error) & standard_error > 0]
   gr <- gr[, .(pos = base_pair_location, ea = effect_allele, oa = other_allele, beta, se = standard_error, gp = p_value)]
   for (ds in cfg$eqtl$datasets) {
     url <- sprintf("%s/%s/%s/%s.all.tsv.gz", cfg$eqtl$base_url, ds$study, ds$dataset, ds$dataset)
     msg(L$locus, " ", region, " x ", ds$label)
-    eq <- tryCatch(tabix(url, region, eqtl_dir), error = function(e) NULL)
-    if (is.null(eq) || !nrow(eq)) next
+    eq <- tryCatch(tabix(url, region, eqtl_dir), error = function(e) { msg("  eQTL query error: ", conditionMessage(e)); NULL })
+    if (is.null(eq) || !nrow(eq)) { msg("  no eQTL rows returned"); next }
     eq <- eq[is.finite(beta) & is.finite(se) & se > 0 & type == "SNP"]
     genes <- eq[, .(minp = min(pvalue)), by = gene_id][minp < cfg$eqtl$min_eqtl_p, gene_id]
+    msg("  GWAS variants ", nrow(gr), "; eQTL rows ", nrow(eq), "; genes with eQTL p<", cfg$eqtl$min_eqtl_p, ": ", length(genes))
     for (gid in genes) {
       e <- eq[gene_id == gid, .(pos = position, ref, alt, eb = beta, ese = se, maf, an)]
       e <- unique(e, by = c("pos", "ref", "alt"))
@@ -57,7 +60,7 @@ for (i in seq_len(nrow(loci))) {
       j <- j[!is.na(sgn) & maf > 0 & maf < 1]
       j[, snp := paste(pos, ref, alt, sep = "_")]
       j <- unique(j, by = "snp")
-      if (nrow(j) < 50) next
+      if (nrow(j) < 50) { msg("    ", gid, ": only ", nrow(j), " shared SNPs, skipped"); next }
       d1 <- list(beta = j$beta * j$sgn, varbeta = j$se^2, type = "cc", s = s_cases, N = cfg$gwas$n_total, snp = j$snp)
       d2 <- list(beta = j$eb, varbeta = j$ese^2, type = "quant", N = round(median(j$an, na.rm = TRUE) / 2),
                  MAF = j$maf, snp = j$snp)

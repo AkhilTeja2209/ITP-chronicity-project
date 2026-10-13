@@ -14,7 +14,9 @@ eqtl_dir <- normalizePath(file.path(DATA, "eqtl"), mustWork = FALSE)
 dir.create(eqtl_dir, recursive = TRUE, showWarnings = FALSE)
 helper <- normalizePath("R/tabix_query.py")
 python <- Sys.getenv("PYTHON", "python3")
-chk <- suppressWarnings(system2(python, c("-c", shQuote("import pysam; print(pysam.__version__)")), stdout = TRUE, stderr = TRUE))
+chk <- suppressWarnings(system2(python, c("-c", shQuote("import sys; print(sys.path); import pysam; print(pysam.__version__)")),
+                                stdout = TRUE, stderr = TRUE))
+chk <- rev(chk)
 if (!is.null(attr(chk, "status"))) stop("Python with pysam is required (pip install pysam); ", python, " said: ", paste(chk, collapse = " "))
 msg("Using ", python, " with pysam ", chk[1])
 

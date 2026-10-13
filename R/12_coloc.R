@@ -14,10 +14,22 @@ eqtl_dir <- normalizePath(file.path(DATA, "eqtl"), mustWork = FALSE)
 dir.create(eqtl_dir, recursive = TRUE, showWarnings = FALSE)
 if (Sys.which("tabix") == "") stop("tabix (htslib) is required on PATH")
 
+# Neither file marks its header with '#', so `tabix -h` does not return it: read the column names
+# from the first line once and pass them explicitly. CRs are stripped (the GWAS file is CRLF).
+header_cache <- list()
+file_header <- function(src) {
+  if (is.null(header_cache[[src]])) {
+    cmd <- if (grepl("^https?://", src)) sprintf("curl -s '%s' | gzip -dc 2>/dev/null | head -1", src)
+           else sprintf("gzip -dc '%s' | head -1", src)
+    header_cache[[src]] <<- strsplit(sub("\r$", "", system(cmd, intern = TRUE)[1]), "\t")[[1]]
+  }
+  header_cache[[src]]
+}
 tabix <- function(src, region, cwd = getwd()) {
-  out <- withr::with_dir(cwd, suppressWarnings(system2("tabix", c("-h", shQuote(src), region), stdout = TRUE, stderr = FALSE)))
-  if (length(out) < 2) return(NULL)
-  fread(text = out, sep = "\t", header = TRUE, na.strings = c("NA", ""))
+  out <- withr::with_dir(cwd, suppressWarnings(system2("tabix", c(shQuote(src), region), stdout = TRUE, stderr = FALSE)))
+  out <- sub("\r$", "", out)
+  if (!length(out)) return(NULL)
+  fread(text = out, sep = "\t", header = FALSE, col.names = file_header(src), na.strings = c("NA", ""))
 }
 
 s_cases <- cfg$gwas$n_cases / cfg$gwas$n_total

@@ -8,12 +8,13 @@ gwas_dir <- file.path(DATA, "gwas")
 gwas_file <- download_once(cfg$gwas$url, file.path(gwas_dir, basename(cfg$gwas$url)))
 download_once(paste0(cfg$gwas$url, ".tbi"), paste0(gwas_file, ".tbi"))
 
-con <- gzfile(gwas_file); hdr <- strsplit(readLines(con, n = 1), "\t")[[1]]; close(con)
+# The harmonised file has CRLF line endings: strip the CR everywhere it is read.
+con <- gzfile(gwas_file); hdr <- strsplit(sub("\r$", "", readLines(con, n = 1)), "\t")[[1]]; close(con)
 col <- function(name) { i <- match(name, hdr); if (is.na(i)) stop("GWAS column missing: ", name); i }
 pcol <- col("p_value")
 
 stream <- function(awk_body) {
-  cmd <- sprintf("gzip -dc '%s' | awk -F'\\t' -v OFS='\\t' 'BEGIN{srand(%d)} %s'", gwas_file, cfg$seed, awk_body)
+  cmd <- sprintf("gzip -dc '%s' | awk -F'\\t' -v OFS='\\t' 'BEGIN{srand(%d)} {sub(/\\r$/, \"\")} %s'", gwas_file, cfg$seed, awk_body)
   fread(cmd = cmd, sep = "\t", header = TRUE, na.strings = c("NA", ""))
 }
 

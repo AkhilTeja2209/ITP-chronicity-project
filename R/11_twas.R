@@ -31,7 +31,7 @@ keys <- file.path(twas_dir, "model_positions.txt")
 fwrite(unique(weights[, .(chr, pos)]), keys, sep = "\t", col.names = FALSE)
 hdr <- gw$header
 ci <- match(c("chromosome", "base_pair_location"), hdr)
-cmd <- sprintf("gzip -dc '%s' | awk -F'\\t' 'NR==FNR{k[$1\":\"$2]=1; next} FNR==1 || (($%d\":\"$%d) in k)' '%s' -",
+cmd <- sprintf("gzip -dc '%s' | awk -F'\\t' '{sub(/\\r$/, \"\")} NR==FNR{k[$1\":\"$2]=1; next} FNR==1 || (($%d\":\"$%d) in k)' '%s' -",
                gw$file, ci[1], ci[2], keys)
 g <- fread(cmd = cmd, sep = "\t", header = TRUE, na.strings = c("NA", ""))
 g <- g[is.finite(beta) & is.finite(standard_error) & standard_error > 0]

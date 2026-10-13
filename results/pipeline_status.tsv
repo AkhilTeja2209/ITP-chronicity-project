@@ -1,11 +1,11 @@
 step	script	status	minutes	message
 00	R/00_audit.R	ok	0.2	
-01	R/01_expression.R	ok	0.6	
+01	R/01_expression.R	ok	0.7	
 02	R/02_differential_expression.R	ok	0.1	
-03	R/03_modules_enrichment.R	ok	0.6	
+03	R/03_modules_enrichment.R	ok	0.8	
 04	R/04_novel_genes.R	ok	0.1	
-10	R/10_gwas.R	ok	0.6	
-11	R/11_twas.R	ok	0.6	
-12	R/12_coloc.R	ok	13.2	
+10	R/10_gwas.R	ok	0.7	
+11	R/11_twas.R	ok	0.8	
+12	R/12_coloc.R	ok	9.7	
 20	R/20_integration.R	ok	0	
-21	R/21_benchmark.R	ok	0.9	
+21	R/21_benchmark.R	ok	1.1	

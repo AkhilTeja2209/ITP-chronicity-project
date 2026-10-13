@@ -1,6 +1,6 @@
 # Pediatric ITP chronicity: integrated variant x expression analysis - results
 
-_Generated 2026-10-13 10:02 UTC by the automated pipeline (commit `2bc79cd`, R version 4.6.1 (2026-06-24))._
+_Generated 2026-10-13 14:25 UTC by the automated pipeline (commit `1caba96`, R version 4.6.1 (2026-06-24))._
 
 > Everything below is produced by code in this repository from public data. Numbers are recomputed
 > on every run; interpretation sentences marked **[auto]** are generated from the numbers, not written by hand.
@@ -10,15 +10,15 @@ _Generated 2026-10-13 10:02 UTC by the automated pipeline (commit `2bc79cd`, R v
 | step | script | status | minutes | message |
 |---|---|---|---|---|
 | 00 | R/00_audit.R | ok | 0.2 |  |
-| 01 | R/01_expression.R | ok | 0.6 |  |
+| 01 | R/01_expression.R | ok | 0.7 |  |
 | 02 | R/02_differential_expression.R | ok | 0.1 |  |
-| 03 | R/03_modules_enrichment.R | ok | 0.6 |  |
+| 03 | R/03_modules_enrichment.R | ok | 0.8 |  |
 | 04 | R/04_novel_genes.R | ok | 0.1 |  |
-| 10 | R/10_gwas.R | ok | 0.6 |  |
-| 11 | R/11_twas.R | ok | 0.6 |  |
-| 12 | R/12_coloc.R | ok | 13.2 |  |
+| 10 | R/10_gwas.R | ok | 0.7 |  |
+| 11 | R/11_twas.R | ok | 0.8 |  |
+| 12 | R/12_coloc.R | ok | 9.7 |  |
 | 20 | R/20_integration.R | ok | 0 |  |
-| 21 | R/21_benchmark.R | ok | 0.9 |  |
+| 21 | R/21_benchmark.R | ok | 1.1 |  |
 
 ## 1. Data audit
 
@@ -208,15 +208,14 @@ at least half the probe set's probes matching the gene uniquely.
 
 | contrast | genes_tested | fdr_hits | new_genes_tested | new_gene_hits | new_lncRNA_hits | robust_new_hits | robust_new_hits_reversing | fisher_p_new_enriched | odds_ratio |
 |---|---|---|---|---|---|---|---|---|---|
-| chronic_vs_ND | 20103 |  663 | 3290 |   43 | NA |   41 |    3 |    1 | 0.346 |
-| remission_vs_ND | 20103 |  836 | 3290 |   58 | NA |    7 | 0 |    1 | 0.37 |
+| chronic_vs_ND | 20103 |  663 | 3007 |   32 |   25 |   30 |    3 |    1 | 0.281 |
+| remission_vs_ND | 20103 |  836 | 3007 |   49 |   40 |    6 | 0 |    1 | 0.343 |
 
 | contrast | symbol | gene_id | biotype | logFC | AveExpr | P.Value | adj.P.Val | fdr_steroid_model | best_probe_support | reverses_on_remission | robust |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | chronic_vs_ND | ENSG00000241490 | ENSG00000241490 | lncRNA |  1.9 | 3.33 | 5.57e-06 | 0.0224 | 0.04 | 0.909 | FALSE | TRUE |
-| chronic_vs_ND | SNAP47 | ENSG00000143740 | protein_coding | -1.23 | 5.11 | 8.70e-05 | 0.0362 | 0.04 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000289519 | ENSG00000289519 | lncRNA | 1.87 | 4.99 | 1.07e-04 | 0.0364 | 0.04 |    1 | FALSE | TRUE |
-| chronic_vs_ND | NA | ENSG00000275536 | NA | 1.13 | 4.03 | 1.34e-04 | 0.0416 | 0.0447 |    1 | FALSE | TRUE |
+| chronic_vs_ND | NA | ENSG00000275536 | unknown | 1.13 | 4.03 | 1.34e-04 | 0.0416 | 0.0447 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000271533 | ENSG00000271533 | lncRNA | 1.39 | 4.29 | 1.45e-04 | 0.0423 | 0.0488 | 0.909 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000267152 | ENSG00000267152 | lncRNA | 1.44 | 2.86 | 1.72e-04 | 0.0423 | 0.0499 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000261799 | ENSG00000261799 | lncRNA | 1.51 | 5.15 | 1.77e-04 | 0.0423 | 0.04 | 0.727 | FALSE | TRUE |
@@ -225,24 +224,25 @@ at least half the probe set's probes matching the gene uniquely.
 | chronic_vs_ND | ENSG00000225300 | ENSG00000225300 | lncRNA | 1.68 | 2.15 | 3.82e-04 | 0.0512 | 0.0612 | 0.818 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000272144 | ENSG00000272144 | lncRNA |  1.3 | 3.51 | 4.66e-04 | 0.0551 | 0.0579 | 0.545 | FALSE | TRUE |
 | chronic_vs_ND | GVQW3 | ENSG00000179240 | protein_coding | 0.876 | 2.87 | 6.28e-04 | 0.0625 | 0.04 |    1 | FALSE | TRUE |
-| chronic_vs_ND | SNHG15 | ENSG00000232956 | lncRNA | -0.849 | 6.77 | 7.24e-04 | 0.0644 | 0.0526 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000272420 | ENSG00000272420 | lncRNA | 0.937 | 5.27 | 7.46e-04 | 0.0644 | 0.0771 | 0.909 | FALSE | TRUE |
 | chronic_vs_ND | ZNF236-DT | ENSG00000264278 | lncRNA | -1.23 | 2.56 | 7.60e-04 | 0.0644 | 0.0724 |    1 | FALSE | TRUE |
-| chronic_vs_ND | NUTM2A-AS1 | ENSG00000223482 | lncRNA | 1.04 | 2.92 | 7.63e-04 | 0.0644 | 0.0773 | 0.818 | FALSE | TRUE |
-| chronic_vs_ND | NDUFS8 | ENSG00000110717 | protein_coding | -1.17 | 6.69 | 9.52e-04 | 0.0688 | 0.078 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000230551 | ENSG00000230551 | lncRNA | 1.77 | 3.58 | 0.00103 | 0.0699 | 0.0809 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000233178 | ENSG00000233178 | lncRNA | 1.56 | 4.68 | 0.00115 | 0.0718 | 0.0808 | 0.545 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000272927 | ENSG00000272927 | lncRNA | 1.11 | 6.59 | 0.00122 | 0.0735 | 0.055 |    1 | TRUE | TRUE |
 | chronic_vs_ND | ENSG00000272909 | ENSG00000272909 | lncRNA | 1.04 | 3.66 | 0.00136 | 0.0765 | 0.0852 |    1 | FALSE | TRUE |
 | chronic_vs_ND | QARS1 | ENSG00000172053 | protein_coding | -0.633 | 8.18 | 0.00158 | 0.0771 | 0.0932 |    1 | FALSE | TRUE |
-| chronic_vs_ND | RIC8A | ENSG00000177963 | protein_coding | -1.05 | 6.02 | 0.00161 | 0.0771 | 0.0932 |    1 | FALSE | TRUE |
-| chronic_vs_ND | TTC21B | ENSG00000123607 | protein_coding | 1.61 | 4.23 | 0.00163 | 0.0771 | 0.0509 |    1 | FALSE | TRUE |
 | chronic_vs_ND | MIRLET7IHG | ENSG00000257354 | lncRNA |  1.1 | 2.82 | 0.00169 | 0.0771 | 0.0624 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000269940 | ENSG00000269940 | lncRNA | 1.14 | 2.75 | 0.00173 | 0.0774 | 0.0954 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000279434 | ENSG00000279434 | TEC | 1.26 | 2.82 | 0.00177 | 0.0784 | 0.0766 |    1 | FALSE | TRUE |
-| chronic_vs_ND | MATN2 | ENSG00000132561 | protein_coding | -0.443 | 0.959 | 0.00178 | 0.0784 | 0.0932 |    1 | FALSE | TRUE |
 | chronic_vs_ND | ENSG00000278383 | ENSG00000278383 | lncRNA | 1.27 | 1.96 | 0.00178 | 0.0784 | 0.0732 |    1 | FALSE | TRUE |
-| chronic_vs_ND | SNHG10 | ENSG00000247092 | lncRNA | 0.695 | 6.96 | 0.00183 | 0.0793 | 0.0974 |    1 | FALSE | TRUE |
+| chronic_vs_ND | UBR5-DT | ENSG00000246263 | lncRNA | 1.05 | 4.22 | 0.00189 | 0.0806 | 0.074 |    1 | FALSE | TRUE |
+| chronic_vs_ND | ENSG00000300864 | ENSG00000300864 | lncRNA | -1.67 | 3.14 | 0.00199 | 0.083 | 0.04 | 0.636 | FALSE | TRUE |
+| chronic_vs_ND | ENSG00000280417 | ENSG00000280417 | TEC | 1.35 | 2.19 | 0.00204 | 0.0832 | 0.0438 |    1 | TRUE | TRUE |
+| chronic_vs_ND | ENSG00000272343 | ENSG00000272343 | lncRNA | 0.807 | 3.41 | 0.00223 | 0.0862 | 0.0852 | 0.727 | FALSE | TRUE |
+| chronic_vs_ND | ENSG00000227215 | ENSG00000227215 | lncRNA | -0.434 | 0.752 | 0.00233 | 0.0877 | 0.107 | 0.909 | FALSE | FALSE |
+| chronic_vs_ND | GOLPH3-DT | ENSG00000272086 | lncRNA | -1.32 | 2.67 | 0.0027 | 0.0931 | 0.074 |    1 | FALSE | TRUE |
+| chronic_vs_ND | ENSG00000274421 | ENSG00000274421 | lncRNA | 1.02 | 2.75 | 0.00278 | 0.0933 | 0.0682 |    1 | FALSE | TRUE |
+| chronic_vs_ND | ENSG00000300297 | ENSG00000300297 | lncRNA | 0.962 | 1.52 | 0.00285 | 0.094 | 0.0878 |    1 | FALSE | TRUE |
 
 ![novel_genes_volcano](figures/novel_genes_volcano.png)
 
@@ -295,30 +295,30 @@ GWAS GCST90018865: lambda_GC = 1.012; 0 variants at p<5e-8; loci defined as **in
 
 ### Colocalisation
 
-67 locus-gene-tissue tests; 1 with PP.H4 > 0.5 (shared causal variant): HLA-C (BLUEPRINT_CD4_T_cell). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 1 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
+67 locus-gene-tissue tests; 1 with PP.H4 > 0.5 (shared causal variant): HLA-C (GTEx_v10_whole_blood). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 1 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
 
 | locus | chr | lead_rsid | lead_p | mhc | eqtl_dataset | gene_id | nsnps | gwas_min_p_shared | credible | PP.H0 | PP.H1 | PP.H2 | PP.H3 | PP.H4 | top_snp | top_snp_PP4 | risk_allele_raises_expression | symbol |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204525 |  487 | 6.17e-05 | FALSE | 5.66e-06 | 1.42e-06 | 0.297 | 0.0737 | 0.63 | 32249315_T_C | 0.801 | TRUE | HLA-C |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000234745 | 1071 | 4.26e-05 | FALSE | 0.0184 | 0.0125 | 0.409 | 0.278 | 0.282 | 32249315_T_C | 0.55 | TRUE | HLA-B |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000030110 | 10662 | 6.29e-07 | TRUE | 0.0069 | 0.272 | 0.0123 | 0.485 | 0.224 | 32725352_C_T | 0.0664 | TRUE | BAK1 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000289375 | 4842 | 1.37e-06 | TRUE | 0.0246 | 0.261 | 0.0463 | 0.491 | 0.177 | 32616054_G_C | 0.0527 | FALSE | ENSG00000289375 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000272221 | 1461 | 4.26e-05 | FALSE | 0.186 | 0.172 | 0.256 | 0.237 | 0.149 | 32372063_T_A | 0.431 | TRUE | MICA-AS1 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000198563 | 2904 | 1.37e-06 | TRUE | 0.0643 | 0.573 | 0.0234 | 0.209 | 0.13 | 32486584_C_T | 0.163 | FALSE | DDX39B |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204308 | 13720 | 6.29e-07 | TRUE | 0.0106 | 0.392 | 0.0131 | 0.486 | 0.0981 | 32725352_C_T | 0.0444 | TRUE | RNF5 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000232940 | 13569 | 6.29e-07 | TRUE | 0.0119 | 0.447 | 0.0116 | 0.436 | 0.0938 | 32725352_C_T | 0.0624 | FALSE | HCG25 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204252 | 13829 | 6.29e-07 | TRUE | 0.0117 | 0.432 | 0.0124 | 0.457 | 0.0864 | 32725352_C_T | 0.0458 | FALSE | HLA-DOA |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000227057 | 13263 | 6.29e-07 | TRUE | 0.0115 | 0.439 | 0.012 | 0.46 | 0.0775 | 32725352_C_T | 0.0723 | TRUE | WDR46 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000242574 | 13829 | 6.29e-07 | TRUE | 0.0077 | 0.284 | 0.0168 | 0.618 | 0.0739 | 32725352_C_T | 0.0427 | FALSE | HLA-DMB |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000237441 | 13221 | 6.29e-07 | TRUE | 0.012 | 0.46 | 0.0116 | 0.443 | 0.0737 | 32725352_C_T | 0.0627 | FALSE | RGL2 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204516 | 2797 | 1.37e-06 | TRUE | 0.00745 | 0.0663 | 0.0865 | 0.769 | 0.0704 | 32485719_T_C | 0.114 | TRUE | MICB |
-| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | BLUEPRINT_CD4_T_cell | ENSG00000225632 | 2831 | 0.00196 | FALSE | 0.206 | 0.0392 | 0.581 | 0.11 | 0.0636 | 54288167_T_C | 0.852 | FALSE | SSBP3-AS2 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000221988 | 13597 | 6.29e-07 | TRUE | 0.0121 | 0.454 | 0.0122 | 0.459 | 0.0629 | 32725352_C_T | 0.0544 | TRUE | PPT2 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204389 | 10247 | 6.29e-07 | TRUE | 0.00876 | 0.431 | 0.01 | 0.494 | 0.0565 | 32725352_C_T | 0.0416 | TRUE | HSPA1A |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000231500 | 13342 | 6.29e-07 | TRUE | 0.0121 | 0.458 | 0.0122 | 0.463 | 0.0551 | 32725352_C_T | 0.0553 | FALSE | RPS18 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204305 | 13734 | 6.29e-07 | TRUE | 0.0101 | 0.373 | 0.0148 | 0.549 | 0.0531 | 32725352_C_T | 0.0549 | FALSE | AGER |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204475 | 3407 | 1.37e-06 | TRUE | 0.0649 | 0.595 | 0.0283 | 0.26 | 0.0518 | 32485719_T_C | 0.106 | FALSE | NCR3 |
-| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | BLUEPRINT_CD4_T_cell | ENSG00000081870 | 2831 | 0.00196 | FALSE | 4.79e-12 | 9.10e-13 | 0.799 | 0.152 | 0.0492 | 53938849_C_T | 0.0465 | FALSE | IFT25 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204525 |  515 | 6.17e-05 | FALSE | 1.09e-08 | 2.65e-09 | 0.138 | 0.0327 | 0.83 | 32226853_G_C | 0.307 | TRUE | HLA-C |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000234745 | 1213 | 4.26e-05 | FALSE | 0.0685 | 0.0466 | 0.293 | 0.199 | 0.393 | 32249315_T_C | 0.538 | TRUE | HLA-B |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000272221 | 1620 | 4.26e-05 | FALSE | 0.00261 | 0.0024 | 0.335 | 0.308 | 0.352 | 32226818_A_C | 0.726 | TRUE | MICA-AS1 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204428 | 6906 | 2.17e-06 | TRUE | 0.0024 | 0.019 | 0.0764 | 0.603 | 0.299 | 32606583_C_T | 0.0794 | TRUE | LY6G5C |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204444 | 5861 | 2.17e-06 | TRUE | 0.0462 | 0.348 | 0.0479 | 0.361 | 0.197 | 32616054_G_C | 0.275 | FALSE | APOM |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000213719 | 8844 | 6.29e-07 | TRUE | 0.00314 | 0.118 | 0.0183 | 0.689 | 0.171 | 32316331_T_G | 0.0387 | FALSE | CLIC1 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000286940 | 2857 | 2.17e-06 | TRUE | 0.0811 | 0.452 | 0.0468 | 0.26 | 0.16 | 32446513_A_G | 0.547 | TRUE | MICB-DT |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204386 | 10339 | 6.29e-07 | TRUE | 0.00432 | 0.193 | 0.015 | 0.668 | 0.12 | 32486501_C_T | 0.178 | FALSE | NEU1 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204520 | 1640 | 4.26e-05 | FALSE | 0.267 | 0.248 | 0.192 | 0.177 | 0.116 | 32371771_G_A | 0.584 | TRUE | MICA |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204351 | 10858 | 6.29e-07 | TRUE | 0.00145 | 0.0618 | 0.0197 | 0.839 | 0.0778 | 32616054_G_C | 0.0475 | FALSE | SKIC2 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204257 | 13605 | 6.29e-07 | TRUE | 0.00383 | 0.131 | 0.0227 | 0.776 | 0.067 | 32961207_A_G | 0.094 | TRUE | HLA-DMA |
+| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000116205 | 3068 | 0.00196 | FALSE | 0.017 | 0.0036 | 0.762 | 0.162 | 0.0562 | 54093410_A_C | 0.057 | TRUE | TCEANC2 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204305 | 13500 | 6.29e-07 | TRUE | 0.0137 | 0.472 | 0.0129 | 0.446 | 0.0562 | 32725352_C_T | 0.0623 | TRUE | AGER |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000166278 | 10560 | 6.29e-07 | TRUE | 0.00497 | 0.217 | 0.0162 | 0.707 | 0.0552 | 32381780_A_T | 0.0807 | TRUE | C2 |
+| L3 |    5 | rs112156751 | 4.24e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000170234 | 3242 | 4.24e-07 | TRUE | 0.113 | 0.0669 | 0.484 | 0.287 | 0.0497 | 159977433_G_T | 0.332 | FALSE | PWWP2A |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204475 | 3360 | 2.17e-06 | TRUE | 0.0921 | 0.532 | 0.0485 | 0.28 | 0.0477 | 32486501_C_T | 0.124 | FALSE | NCR3 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000228727 | 9202 | 6.29e-07 | TRUE | 0.0127 | 0.575 | 0.00791 | 0.357 | 0.0471 | 32725352_C_T | 0.0694 | FALSE | SAPCD1 |
+| L2 |    8 | rs113868754 | 1.60e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000104427 | 3123 | 1.60e-07 | TRUE | 3.14e-19 | 1.66e-19 | 0.627 | 0.331 | 0.0419 | 78655847_G_A | 0.103 | FALSE | ZC2HC1A |
+| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000215883 | 3068 | 0.00196 | FALSE | 0.156 | 0.0332 | 0.636 | 0.135 | 0.0398 | 54154524_G_A | 0.899 | TRUE | CYB5RL |
+| L7 |   15 | rs1384122 | 7.11e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000069667 | 2845 | 7.11e-07 | TRUE | 0.155 | 0.503 | 0.0712 | 0.232 | 0.0398 | 60828567_C_T |  0.7 | TRUE | RORA |
 
 ![coloc_top_loci](figures/coloc_top_loci.png)
 

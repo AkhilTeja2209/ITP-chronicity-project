@@ -29,7 +29,9 @@ ev <- merge(ev, pick("GSE46922", "chronic_vs_ND", "F2"), all.x = TRUE)
 ev <- merge(ev, pick("GSE56232", "remission_vs_ND", "F3"), all.x = TRUE)
 ev[, symbol := gene_lookup$symbol[match(gene_id, gene_lookup$gene_id)]]
 
-ev[, F1 := !is.na(p_F1) & p_F1 < pn]
+# F1 counts only when the early whole-blood change points the same way as the chronic T-cell change;
+# a gene up in chronic T cells but down in early progressors is not converging evidence.
+ev[, F1 := !is.na(p_F1) & p_F1 < pn & (is.na(logFC_F2) | sign(logFC_F1) == sign(logFC_F2))]
 ev[, F2 := !is.na(p_F2) & p_F2 < pn]
 ev[, F3 := !is.na(p_F3) & p_F3 < pn & sign(logFC_F3) == -sign(logFC_F2)]
 ev[, F1_same_direction_as_F2 := sign(logFC_F1) == sign(logFC_F2)]

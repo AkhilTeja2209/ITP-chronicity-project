@@ -126,8 +126,8 @@ save_rds(cdna_sheet, "gse23754_sample_sheet")
 write_tab(cdna_sheet, "gse23754_sample_sheet")
 
 summary_tab <- rbind(
-  sheet[, .(n = .N, n_unique_arrays = uniqueN(md5)), by = .(gse, group)],
-  cdna_sheet[, .(gse = cfg$geo$cdna, n = .N, n_unique_arrays = .N), by = group])
+  sheet[, .(n = .N, n_not_duplicated_elsewhere = sum(!is_duplicate)), by = .(gse, group)],
+  cdna_sheet[, .(gse = cfg$geo$cdna, n = .N, n_not_duplicated_elsewhere = .N), by = group])
 write_tab(summary_tab, "audit_group_sizes")
 print(summary_tab)
 msg("Audit complete")

@@ -12,7 +12,8 @@ fig <- function(name, caption = name) {
     sprintf("![%s](figures/%s.png)", caption, name) else ""
 }
 opt <- function(name) if (has_rds(name)) load_rds(name) else NULL
-status <- if (file.exists(file.path(RES, "pipeline_status.tsv"))) fread(file.path(RES, "pipeline_status.tsv")) else NULL
+status <- if (file.exists(file.path(RES, "pipeline_status.tsv")))
+  fread(file.path(RES, "pipeline_status.tsv"), colClasses = "character", na.strings = NULL) else NULL
 
 gpl <- opt("gpl570"); gw <- opt("gwas"); twas <- opt("twas"); coloc <- opt("coloc")
 integ <- opt("integration"); bench <- opt("benchmark"); wg <- opt("wgcna")
@@ -44,7 +45,7 @@ L <- c(
             nrow(fread(file.path(RES, "tables", "audit_duplicate_arrays.tsv")))) else "",
   "",
   "## 2. Expression layer", "",
-  "### Probe re-annotation (GPL570 vs current Ensembl)", "",
+  sprintf("### Probe re-annotation (GEO GPL570 table vs exact probe-sequence matches to GENCODE v%d)", cfg$annotation$gencode_release), "",
   tbl("gpl570_reannotation_summary"), "",
   "Biotypes of genes that become measurable only under the current annotation:", "",
   tbl("gpl570_reannotation_new_gene_biotypes", max_rows = 10), "",
@@ -76,8 +77,13 @@ L <- c(
                               sum(twas$fdr < cfg$integration$twas_fdr), cfg$integration$twas_fdr, sum(twas$bonferroni_sig)) else "",
   "", tbl("twas_whole_blood", max_rows = 20), "", fig("twas_manhattan"), "",
   "### Colocalisation", "",
-  if (!is.null(coloc) && nrow(coloc)) sprintf("%d locus-gene-tissue tests; %d with PP.H4 > %.1f (shared causal variant).",
-    nrow(coloc), sum(coloc$PP.H4 > cfg$coloc$pp4), cfg$coloc$pp4) else "",
+  if (!is.null(coloc) && nrow(coloc)) {
+    hits <- coloc[PP.H4 > cfg$coloc$pp4]
+    paste(sprintf("%d locus-gene-tissue tests; %d with PP.H4 > %.1f (shared causal variant)%s.",
+                  nrow(coloc), nrow(hits), cfg$coloc$pp4,
+                  if (nrow(hits)) paste0(": ", paste(unique(sprintf("%s (%s)", hits$symbol, hits$eqtl_dataset)), collapse = ", ")) else ""),
+          if (nrow(hits) && all(hits$mhc)) "**[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping." else "")
+  } else "",
   "", tbl("coloc_results", max_rows = 20), "", fig("coloc_top_loci"), "",
   "## 4. Integration", "",
   "Formal tests of whether genetic evidence and chronicity expression converge more than chance:", "",
@@ -85,7 +91,11 @@ L <- c(
   if (!is.null(integ)) {
     t <- integ$tests
     sig <- t[is.finite(p) & p < 0.05]
-    paste("**[auto]**", if (nrow(sig)) sprintf("%d of %d convergence tests reach p<0.05: %s.", nrow(sig), nrow(t), paste(sig$test, collapse = "; "))
+    bonf <- 0.05 / nrow(t)
+    paste("**[auto]**", if (nrow(sig)) sprintf("%d of %d convergence tests reach nominal p<0.05 (%s); %s survive Bonferroni correction for %d tests (p<%.4f). Treat the convergence as %s.",
+                                               nrow(sig), nrow(t), paste(sig$test, collapse = "; "),
+                                               if (any(t$p < bonf, na.rm = TRUE)) sum(t$p < bonf, na.rm = TRUE) else "none",
+                                               nrow(t), bonf, if (any(t$p < bonf, na.rm = TRUE)) "supported" else "not established")
           else sprintf("None of the %d convergence tests reaches p<0.05: at current sample sizes, the overlap between inherited ITP risk genes and chronicity-associated expression is not distinguishable from chance. Candidate genes below are leads, not findings.", nrow(t)))
   } else "", "",
   "Top candidate genes (ranked by number of filters passed, then combined p):", "",
@@ -100,7 +110,15 @@ L <- c(
           sprintf("Baseline AUC = %.2f; best model = %s (AUC %.2f, 95%% CI %.2f-%.2f, permutation p = %.3f).",
                   b, best$model, best$AUC, best$CI_low, best$CI_high, best$permutation_p),
           if (any(t1$beats_chance)) "At least one model's CI excludes 0.5." else
-            "No model's confidence interval excludes 0.5; with 4 progressors this benchmark cannot distinguish a real signature from chance, which is the expected and reportable result at this n.")
+            "No model's confidence interval excludes 0.5; with 4 progressors this benchmark cannot distinguish a real signature from chance, which is the expected and reportable result at this n.",
+          {
+            t2 <- bench[task == "T2_eventual_chronic_vs_acute"]
+            w <- t2[beats_chance == TRUE]
+            if (nrow(w)) sprintf("In secondary task T2 (confounded by disease duration), only %s beat%s chance (%s); transcriptomic signatures add nothing beyond it.",
+                                 paste(w$model, collapse = ", "), if (nrow(w) == 1) "s" else "",
+                                 paste(sprintf("AUC %.2f, CI %.2f-%.2f", w$AUC, w$CI_low, w$CI_high), collapse = "; "))
+            else "In secondary task T2 no model's CI excludes 0.5."
+          })
   } else "", "",
   fig("benchmark_roc"), "",
   "## 6. Limitations stated by the design", "",

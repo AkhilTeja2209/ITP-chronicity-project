@@ -78,7 +78,7 @@ All parameters are in [`config/config.yaml`](config/config.yaml); marker gene se
 ## Running it
 
 **On GitHub (default).** Every push to `main` that touches code runs `.github/workflows/pipeline.yml`
-(about 1–2 hours on the first run, mostly package installation and downloads, which are then cached).
+(about 30 minutes on the first run, mostly package installation and downloads; both are cached afterwards).
 To re-run by hand, use *Actions → pipeline → Run workflow*, optionally listing step ids such as `20 21`.
 Outputs are uploaded as an artifact and pushed to the `results` branch.
 

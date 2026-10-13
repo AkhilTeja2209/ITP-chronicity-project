@@ -1,0 +1,38 @@
+Package: itpchronicity
+Title: Integrated Variant x Expression Analysis of Pediatric ITP Chronicity
+Version: 0.1.0
+Authors@R: person("M V S Akhil", "Teja", role = c("aut", "cre"))
+Description: Reproducible pipeline that audits public pediatric immune thrombocytopenia (ITP)
+    transcriptomic cohorts, derives confounder-aware chronicity expression signals, links ITP GWAS
+    susceptibility variants to genes by TWAS and colocalisation, intersects the two layers and
+    benchmarks the resulting signatures against an expression-derived clinical baseline.
+    This file only declares dependencies; the project is run with run_pipeline.R, not installed.
+License: MIT + file LICENSE
+Encoding: UTF-8
+biocViews: Software
+Imports:
+    data.table,
+    yaml,
+    ggplot2,
+    R.utils,
+    withr,
+    GEOquery,
+    Biobase,
+    affy,
+    hgu133plus2cdf,
+    hgu133plus2.db,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    limma,
+    sva,
+    biomaRt,
+    EnsDb.Hsapiens.v86,
+    ensembldb,
+    GenomicRanges,
+    WGCNA,
+    fgsea,
+    DBI,
+    RSQLite,
+    coloc,
+    pROC,
+    glmnet

@@ -1,0 +1,24 @@
+# Marker gene sets used to estimate confounders directly from expression.
+# A sample's score is the mean of its per-gene z-scores over the genes present on the platform.
+
+# Platelet transcripts. Low platelet count -> less platelet mRNA in whole blood, so these genes look
+# "down" in ITP for purely compositional reasons. Must be controlled before claiming any signature.
+platelet: [PF4, PPBP, ITGA2B, GP9, TUBB1, GP1BB, SPARC, TREML1, CLEC1B, GNG11]
+
+# Direct glucocorticoid-receptor targets: a treatment (steroid) exposure signature.
+glucocorticoid: [FKBP5, TSC22D3, KLF9, DDIT4, ZBTB16, PER1, DUSP1, IRS2, CD163]
+
+# Type-I interferon response: recent viral infection, a known predictor of resolution.
+interferon: [IFI44L, IFI27, ISG15, RSAD2, OAS1, MX1, IFIT1, IFI44, SIGLEC1, IFI6]
+
+# Cell-type markers (MCP-counter style). In sorted T-cell sets these measure contamination/purity.
+t_cell: [CD3D, CD3E, CD3G, CD2, CD28, LCK, TRAT1]
+b_cell: [CD19, MS4A1, CD79A, CD79B, BANK1, FCRL5]
+nk_cell: [NKG7, GNLY, KLRD1, KLRF1, PRF1, SH2D1B]
+monocyte: [CD14, LYZ, S100A8, S100A9, FCN1, CSF1R, VCAN]
+neutrophil: [FCGR3B, CSF3R, CXCR2, FPR1, MNDA, CMTM2]
+erythroid: [HBB, HBA1, HBA2, ALAS2, CA1, SLC4A1]
+
+# Sex inference: female = high XIST, male = high chrY genes.
+sex_female: [XIST, TSIX]
+sex_male: [RPS4Y1, DDX3Y, KDM5D, UTY, EIF1AY, USP9Y]

@@ -1,0 +1,85 @@
+# Central configuration. Every script reads this file; change values here, not in code.
+
+paths:
+  data: data          # downloaded inputs (gitignored, cached in CI)
+  results: results    # all outputs: tables/, figures/, rds/, REPORT.md
+
+seed: 2026
+
+# ---------------------------------------------------------------- expression layer
+geo:
+  # Affymetrix HG-U133 Plus 2.0 (GPL570), sorted peripheral-blood T cells, Gothenburg group
+  gpl570: [GSE46922, GSE56232]
+  # Stanford 41K two-colour cDNA array (GPL10845), whole blood vs Universal Human Reference RNA
+  cdna: GSE23754
+
+qc:
+  drop_outliers: false        # small n: outliers are reported, not silently dropped
+  near_duplicate_r: 0.995     # Pearson r above which two distinct files are flagged as the same RNA
+
+annotation:
+  ensembl_mirror: [www, useast, asia]   # tried in order; result cached under data/
+
+# Covariates for the "adjusted" limma model of each cohort (names refer to config/gene_sets.yaml
+# scores, plus "sex"). An unadjusted model is always fitted alongside for comparison.
+de_covariates:
+  GSE23754: [platelet, sex]
+  GSE46922: [sex]
+  GSE56232: []                # paired design: subject is blocked instead
+
+de:
+  p_nominal: 0.05
+  fdr: 0.10
+
+wgcna:
+  n_genes: 5000               # most variable genes entering the network
+  min_module_size: 30
+  merge_cut_height: 0.25
+
+enrichment:
+  # MSigDB gene sets (CC BY 4.0), downloaded as GMT
+  base_url: https://data.broadinstitute.org/gsea-msigdb/msigdb/release/2025.1.Hs
+  collections: [h.all.v2025.1.Hs.symbols.gmt, c2.cp.reactome.v2025.1.Hs.symbols.gmt]
+  min_size: 15
+  max_size: 500
+
+# ---------------------------------------------------------------- variant layer
+gwas:
+  id: GCST90018865            # Sakaue et al. 2021 Nat Genet; UKB + FinnGen + BBJ meta-analysis, GRCh38-harmonised
+  url: https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90018001-GCST90019000/GCST90018865/harmonised/GCST90018865.h.tsv.gz
+  n_cases: 843                # 675 European + 168 East Asian
+  n_total: 668150
+  lead_p: 1.0e-6              # loci are defined around independent leads below this p
+  fallback_top_loci: 10       # if nothing reaches lead_p, take this many best independent loci (flagged)
+  fallback_p: 1.0e-5
+  window_kb: 500
+  min_maf: 0.005
+  # Placeholder (not yet used by the code): second GWAS for replication, e.g. the FinnGen R12 ITP
+  # endpoint once the FinnGen access form is approved.
+  replication_url: ""
+
+eqtl:
+  # eQTL Catalogue (r8) full summary statistics, queried by region with tabix
+  base_url: https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/sumstats
+  datasets:
+    - {study: QTS000015, dataset: QTD000356, label: GTEx_v10_whole_blood}
+    - {study: QTS000002, dataset: QTD000031, label: BLUEPRINT_CD4_T_cell}
+  min_eqtl_p: 1.0e-4          # genes whose best eQTL in the window is weaker than this are skipped
+
+twas:
+  # PredictDB GTEx v8 MASHR models (Barbeira et al. 2021), Zenodo record 3518299
+  url: https://zenodo.org/api/records/3518299/files/mashr_eqtl.tar/content
+  tissue: Whole_Blood
+
+coloc:
+  p1: 1.0e-4
+  p2: 1.0e-4
+  p12: 1.0e-5
+  pp4: 0.5
+
+# ---------------------------------------------------------------- integration + benchmark
+integration:
+  twas_fdr: 0.10
+  top_n_signature: 50         # genes per direction in the cross-cohort T-cell signature
+benchmark:
+  n_permutations: 2000

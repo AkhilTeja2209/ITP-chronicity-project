@@ -1,0 +1,85 @@
+name: pipeline
+
+on:
+  push:
+    branches: [main]
+    paths: ['R/**', 'config/**', 'run_pipeline.R', 'DESCRIPTION', '.github/workflows/**']
+  workflow_dispatch:
+    inputs:
+      steps:
+        description: 'Space-separated step ids to run (blank = all), e.g. "10 11 12"'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      STEPS: ${{ github.event.inputs.steps }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tabix libcurl4-openssl-dev libssl-dev \
+            libxml2-dev libglpk-dev libgsl-dev libpng-dev libfontconfig1-dev
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache-version: 1
+
+      # Downloaded inputs (GEO arrays, ~650 MB GWAS, ~260 MB TWAS models) are cached between runs.
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data
+          key: data-v1-${{ github.run_id }}
+          restore-keys: data-v1-
+
+      - name: Run pipeline
+        run: Rscript run_pipeline.R $STEPS
+
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data
+          key: data-v1-${{ github.run_id }}
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results
+          path: results
+          retention-days: 30
+
+      # Human-readable results (report, tables, figures) are force-pushed to the `results` branch.
+      - name: Publish results branch
+        if: always() && github.ref == 'refs/heads/main'
+        run: |
+          [ -f results/REPORT.md ] || exit 0
+          rm -rf /tmp/pub && cp -r results /tmp/pub && cd /tmp/pub
+          rm -rf rds
+          cp REPORT.md README.md
+          git init -q -b results
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Results for ${GITHUB_SHA::7}"
+          git push -f -q "https://x-access-token:${GITHUB_PAT}@github.com/${GITHUB_REPOSITORY}.git" results

@@ -35,7 +35,7 @@ tabix <- function(src, region, cwd = getwd()) {
   err <- tempfile()
   out <- withr::with_dir(cwd, suppressWarnings(system2(python, c(shQuote(helper), shQuote(src), region),
                                                        stdout = TRUE, stderr = err)))
-  if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(head(readLines(err, warn = FALSE), 3), collapse = " | "))
+  if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(tail(readLines(err, warn = FALSE), 3), collapse = " | "))
   out <- sub("\r$", "", out)
   if (!length(out)) return(NULL)
   fread(text = out, sep = "\t", header = FALSE, col.names = file_header(src), na.strings = c("NA", ""))

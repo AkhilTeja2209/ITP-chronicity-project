@@ -13,8 +13,10 @@ loci <- gw$loci
 eqtl_dir <- normalizePath(file.path(DATA, "eqtl"), mustWork = FALSE)
 dir.create(eqtl_dir, recursive = TRUE, showWarnings = FALSE)
 helper <- normalizePath("R/tabix_query.py")
-if (system2("python3", c("-c", shQuote("import pysam")), stdout = FALSE, stderr = FALSE) != 0)
-  stop("python3 with pysam is required (pip install pysam)")
+python <- Sys.getenv("PYTHON", "python3")
+chk <- suppressWarnings(system2(python, c("-c", shQuote("import pysam; print(pysam.__version__)")), stdout = TRUE, stderr = TRUE))
+if (!is.null(attr(chk, "status"))) stop("Python with pysam is required (pip install pysam); ", python, " said: ", paste(chk, collapse = " "))
+msg("Using ", python, " with pysam ", chk[1])
 
 # Neither file marks its header with '#', so `tabix -h` does not return it: read the column names
 # from the first line once and pass them explicitly. CRs are stripped (the GWAS file is CRLF).
@@ -29,7 +31,7 @@ file_header <- function(src) {
 }
 tabix <- function(src, region, cwd = getwd()) {
   err <- tempfile()
-  out <- withr::with_dir(cwd, suppressWarnings(system2("python3", c(shQuote(helper), shQuote(src), region),
+  out <- withr::with_dir(cwd, suppressWarnings(system2(python, c(shQuote(helper), shQuote(src), region),
                                                        stdout = TRUE, stderr = err)))
   if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(head(readLines(err, warn = FALSE), 3), collapse = " | "))
   out <- sub("\r$", "", out)

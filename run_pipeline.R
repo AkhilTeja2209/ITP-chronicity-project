@@ -11,6 +11,7 @@ steps <- list(
   "01" = list(file = "R/01_expression.R",            needs = "00"),
   "02" = list(file = "R/02_differential_expression.R", needs = "01"),
   "03" = list(file = "R/03_modules_enrichment.R",    needs = "02"),
+  "04" = list(file = "R/04_novel_genes.R",          needs = "02"),
   "10" = list(file = "R/10_gwas.R",                  needs = "01"),   # needs gene coordinates from 01
   "11" = list(file = "R/11_twas.R",                  needs = "10"),
   "12" = list(file = "R/12_coloc.R",                 needs = "10"),

@@ -65,6 +65,7 @@ Full rationale, methods and anticipated questions: [`docs/PROJECT_PLAN.md`](docs
 | 01 | `R/01_expression.R` | RMA (affy); RLE QC; GPL570 probes re-mapped with current Ensembl BioMart vs legacy `hgu133plus2.db`; cDNA clones re-mapped via Entrez/HGNC; platelet, glucocorticoid, interferon, cell-type and sex scores; ComBat only when batch is not confounded with group |
 | 02 | `R/02_differential_expression.R` | limma, unadjusted / confounder-adjusted / steroid-sensitivity models; paired design for GSE56232; platelet-artefact check |
 | 03 | `R/03_modules_enrichment.R` | WGCNA signed network; module scores projected into every cohort; fgsea / ORA |
+| 04 | `R/04_novel_genes.R` | genes measurable only after re-annotation: hits, lncRNAs, robustness (probe support, expression, steroid model, reversal) |
 | 10 | `R/10_gwas.R` | streamed QC, λ<sub>GC</sub>, distance-clumped loci, Manhattan/QQ |
 | 11 | `R/11_twas.R` | S-PrediXcan formula on GTEx v8 MASHR whole-blood weights |
 | 12 | `R/12_coloc.R` | `coloc.abf` per locus × gene × eQTL dataset, regions fetched with tabix |

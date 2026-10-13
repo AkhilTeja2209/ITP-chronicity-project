@@ -16,16 +16,24 @@ ann <- fread(file.path(RES, "tables", "gpl570_probe_reannotation.tsv"))
 pmap <- fread(file.path(DATA, "gencode", "gpl570_probeset_to_gene.tsv"))
 
 # ---------------------------------------------------------------- gene-level novelty
-# A gene was measurable before if any probe set mapping to it today was already annotated to it
-# (same symbol or a renamed symbol). Otherwise it is newly measurable.
+# A gene was measurable before if the GEO GPL570 table (what GEO2R and earlier re-analyses used)
+# named it on any probe set: every symbol of multi-symbol entries ("A /// B") counts, and old
+# symbols are resolved to current HGNC names so renames (QARS -> QARS1) are not called new.
+suppressPackageStartupMessages({ library(Biobase); library(limma) })
+gpl_fd <- fData(readRDS(file.path(DATA, "geo", paste0(cfg$geo$gpl570[1], "_eset.rds"))))
+legacy_raw <- unique(trimws(unlist(strsplit(as.character(gpl_fd[["Gene Symbol"]]), "///", fixed = TRUE))))
+legacy_raw <- legacy_raw[!is.na(legacy_raw) & legacy_raw != ""]
+legacy_current <- suppressWarnings(alias2SymbolTable(legacy_raw, "Hs"))
+legacy_set <- unique(c(legacy_raw, na.omit(legacy_current)))
+msg(length(legacy_raw), " symbols in the GEO GPL570 table (", length(legacy_set), " after resolving renames)")
+
 g <- ann[!is.na(current_gene) & current_gene != ""]
 g <- merge(g, pmap[, .(probe = probeset, n_probes, top)], by = "probe", all.x = TRUE)
-gene_status <- g[, .(previously_measurable = any(status %in% c("unchanged", "same gene, renamed")),
-                     n_probesets = .N, best_probe_support = max(top / n_probes, na.rm = TRUE),
+gene_status <- g[, .(n_probesets = .N, best_probe_support = max(top / n_probes, na.rm = TRUE),
                      statuses = paste(sort(unique(status)), collapse = "; ")), by = .(gene_id = current_gene)]
 gene_status[, symbol := gene_lookup$symbol[match(gene_id, gene_lookup$gene_id)]]
-gene_status[, biotype := gene_lookup$biotype[match(gene_id, gene_lookup$gene_id)]]
-gene_status[, newly_measurable := !previously_measurable]
+gene_status[, biotype := fcoalesce(gene_lookup$biotype[match(gene_id, gene_lookup$gene_id)], "unknown")]
+gene_status[, newly_measurable := !(symbol %in% legacy_set)]
 write_tab(gene_status[order(-newly_measurable, biotype)], "novel_gene_status")
 msg(sum(gene_status$newly_measurable), " genes newly measurable (",
     gene_status[newly_measurable == TRUE & biotype == "lncRNA", .N], " lncRNA) out of ", nrow(gene_status))
@@ -53,7 +61,7 @@ hits[, `:=`(sig = adj.P.Val < cfg$de$fdr,
 
 summary <- hits[, .(genes_tested = .N, fdr_hits = sum(sig),
                     new_genes_tested = sum(newly_measurable), new_gene_hits = sum(sig & newly_measurable),
-                    new_lncRNA_hits = sum(sig & newly_measurable & biotype == "lncRNA"),
+                    new_lncRNA_hits = sum(sig & newly_measurable & biotype %in% "lncRNA"),
                     robust_new_hits = sum(robust & newly_measurable),
                     robust_new_hits_reversing = sum(robust & newly_measurable & reverses_on_remission %in% TRUE),
                     fisher_p_new_enriched = fisher.test(table(newly_measurable, sig), alternative = "greater")$p.value,

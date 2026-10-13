@@ -15,7 +15,7 @@ reproducible pipeline that asks two questions:
 It then tests whether the two layers converge more than chance, and benchmarks the resulting
 signature against a baseline on a held-out cohort from a different platform.
 
-**Latest results:** [`results/REPORT.md`](results/REPORT.md) (tables and figures alongside), rebuilt and committed by GitHub Actions on every run. Slides for presenting them: [`docs/ITP_chronicity_results.pptx`](docs/ITP_chronicity_results.pptx).
+**Latest results:** [`results/REPORT.md`](results/REPORT.md) (tables and figures alongside), rebuilt and committed by GitHub Actions on every run.
 
 ## Why this design (short version)
 

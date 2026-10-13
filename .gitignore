@@ -5,3 +5,5 @@ deck/node_modules/
 .RData
 .Rproj.user/
 *.tbi
+deck/
+docs/*.pptx

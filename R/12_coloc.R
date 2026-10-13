@@ -73,7 +73,7 @@ for (i in seq_len(nrow(loci))) {
       d1 <- list(beta = j$beta * j$sgn, varbeta = j$se^2, type = "cc", s = s_cases, N = cfg$gwas$n_total, snp = j$snp)
       d2 <- list(beta = j$eb, varbeta = j$ese^2, type = "quant", N = round(median(j$an, na.rm = TRUE) / 2),
                  MAF = j$maf, snp = j$snp)
-      cr <- tryCatch(suppressMessages(coloc.abf(d1, d2, p1 = cfg$coloc$p1, p2 = cfg$coloc$p2, p12 = cfg$coloc$p12)),
+      cr <- tryCatch({ invisible(capture.output(r <- suppressMessages(coloc.abf(d1, d2, p1 = cfg$coloc$p1, p2 = cfg$coloc$p2, p12 = cfg$coloc$p12)))); r },
                      error = function(e) NULL)
       if (is.null(cr)) next
       top <- as.data.table(cr$results)[order(-SNP.PP.H4)][1]

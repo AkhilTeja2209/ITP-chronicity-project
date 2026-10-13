@@ -82,7 +82,7 @@ All parameters are in [`config/config.yaml`](config/config.yaml); marker gene se
 To re-run by hand, use *Actions → pipeline → Run workflow*, optionally listing step ids such as `20 21`.
 Outputs are uploaded as an artifact and pushed to the `results` branch.
 
-**Locally** (Linux/macOS, or Windows with Rtools and `tabix` on PATH):
+**Locally** (Linux/macOS; on Windows use WSL). Needs R ≥ 4.4 and Python 3 with `pysam` (`pip install pysam`), used for region queries of remote eQTL files:
 
 ```bash
 Rscript -e 'install.packages("pak"); pak::local_install_deps()'

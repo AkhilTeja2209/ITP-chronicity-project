@@ -1,0 +1,27 @@
+gsm	title	group	patient	description	eventual_chronic	early_sample
+"GSM586124"	"Human blood_Acute ITP_Pt1"	"acute"	"1"	"Peripheral blood from ITP Pt#1. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586125"	"Human blood_Acute ITP_Pt2"	"acute"	"2"	"Peripheral blood from ITP Pt#2 Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586126"	"Human blood_Acute ITP_Pt3"	"acute"	"3"	"Peripheral blood from ITP Pt#3. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586127"	"Human blood_Acute ITP_Pt4"	"acute"	"4"	"Peripheral blood from ITP Pt#4. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586128"	"Human blood_Acute ITP_Pt5"	"acute"	"5"	"Peripheral blood from ITP Pt#5. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586129"	"Human blood_Acute ITP_Pt6"	"acute"	"6"	"Peripheral blood from ITP Pt#6. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586130"	"Human blood_Acute ITP_Pt7"	"acute"	"7"	"Peripheral blood from ITP Pt#7. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586131"	"Human blood_Acute ITP_Pt8"	"acute"	"8"	"Peripheral blood from ITP Pt#8. Collected within 6 months of dx during active disease, the pt recovered within 6 months of dx."	0	TRUE
+"GSM586132"	"Human blood_Progression to chronic ITP_Pt9"	"progression"	"9"	"Peripheral blood from ITP Pt#9. Collected within 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	TRUE
+"GSM586133"	"Human blood_Progression to chronic ITP_Pt10"	"progression"	"10"	"Peripheral blood from ITP Pt#10. Collected within 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	TRUE
+"GSM586134"	"Human blood_Progression to chronic ITP_Pt11"	"progression"	"11"	"Peripheral blood from ITP Pt#11. Collected within 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	TRUE
+"GSM586135"	"Human blood_Progression to chronic ITP_Pt12"	"progression"	"12"	"Peripheral blood from ITP Pt#12. Collected within 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	TRUE
+"GSM586136"	"Human blood_Chronic ITP_Pt22"	"chronic"	"22"	"Peripheral blood from ITP Pt#22. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586137"	"Human blood_Chronic ITP_Pt23"	"chronic"	"23"	"Peripheral blood from ITP Pt#23. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586138"	"Human blood_Chronic ITP_Pt24"	"chronic"	"24"	"Peripheral blood from ITP Pt#24. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586139"	"Human blood_Chronic ITP_Pt25"	"chronic"	"25"	"Peripheral blood from ITP Pt#25. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586140"	"Human blood_Chronic ITP_Pt26"	"chronic"	"26"	"Peripheral blood from ITP Pt#26. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586141"	"Human blood_Chronic ITP_Pt27"	"chronic"	"27"	"Peripheral blood from ITP Pt#27. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586142"	"Human blood_Chronic ITP_Pt28"	"chronic"	"28"	"Peripheral blood from ITP Pt#28. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586143"	"Human blood_Chronic ITP_Pt29"	"chronic"	"29"	"Peripheral blood from ITP Pt#29. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586144"	"Human blood_Chronic ITP_Pt30"	"chronic"	"30"	"Peripheral blood from ITP Pt#30. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586145"	"Human blood_Chronic ITP_Pt31"	"chronic"	"31"	"Peripheral blood from ITP Pt#31. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586146"	"Human blood_Chronic ITP_Pt32"	"chronic"	"32"	"Peripheral blood from ITP Pt#32. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586147"	"Human blood_Chronic ITP_Pt33"	"chronic"	"33"	"Peripheral blood from ITP Pt#33. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586148"	"Human blood_Chronic ITP_Pt34"	"chronic"	"34"	"Peripheral blood from ITP Pt#34. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE
+"GSM586149"	"Human blood_Chronic ITP_Pt36"	"chronic"	"36"	"Peripheral blood from ITP Pt#36. Collected after 6 months of dx during active disease, the pt did not recover by 6 months of dx."	1	FALSE

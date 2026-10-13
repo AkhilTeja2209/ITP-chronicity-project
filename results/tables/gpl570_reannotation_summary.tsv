@@ -1,0 +1,9 @@
+status	N
+"unchanged"	30524
+"lost: probes no longer match a transcript"	7245
+"unmapped_both"	6984
+"reassigned to a different gene"	3593
+"lost: probes now hit several genes"	2307
+"same gene, renamed"	2113
+"recovered (no GPL570 symbol, now maps)"	1502
+"unmapped: probes hit several genes"	407

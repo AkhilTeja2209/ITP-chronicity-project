@@ -1,0 +1,9 @@
+cohort	contrast	model	top100_frac_platelet_correlated	top100_frac_steroid_correlated	platelet_marker_genes_in_top100
+"GSE23754"	"progression_vs_acute"	"unadjusted"	0	0.2	0
+"GSE23754"	"progression_vs_acute"	"adjusted"	0	0.05	0
+"GSE23754"	"chronic_vs_acute"	"unadjusted"	0	0.21	0
+"GSE23754"	"chronic_vs_acute"	"adjusted"	0	0.05	0
+"GSE46922"	"chronic_vs_ND"	"unadjusted"	0.28	0	0
+"GSE46922"	"chronic_vs_ND"	"adjusted"	0.05	0	0
+"GSE56232"	"remission_vs_ND"	"unadjusted"	0.02	0.03	0
+"GSE56232"	"remission_vs_ND"	"adjusted"	0.02	0.03	0

@@ -1,0 +1,13 @@
+cohort	contrast	model	n_genes	n_p05	n_fdr	n	df_resid	covariates	ratio_vs_null
+"GSE23754"	"progression_vs_acute"	"unadjusted"	13474	582	0	26	23	""	0.86
+"GSE23754"	"chronic_vs_acute"	"unadjusted"	13474	1399	0	26	23	""	2.08
+"GSE23754"	"progression_vs_acute"	"adjusted"	13474	312	0	26	21	"platelet+sex"	0.46
+"GSE23754"	"chronic_vs_acute"	"adjusted"	13474	296	0	26	21	"platelet+sex"	0.44
+"GSE23754"	"progression_vs_acute"	"sensitivity_glucocorticoid"	13474	316	0	26	20	"platelet+sex+glucocorticoid"	0.47
+"GSE23754"	"chronic_vs_acute"	"sensitivity_glucocorticoid"	13474	257	0	26	20	"platelet+sex+glucocorticoid"	0.38
+"GSE46922"	"chronic_vs_ND"	"unadjusted"	20103	3394	647	13	11	""	3.38
+"GSE46922"	"chronic_vs_ND"	"adjusted"	20103	3173	663	13	10	"sex"	3.16
+"GSE46922"	"chronic_vs_ND"	"sensitivity_glucocorticoid"	20103	3402	717	13	9	"sex+glucocorticoid"	3.38
+"GSE56232"	"remission_vs_ND"	"unadjusted"	20103	3915	836	12	5	"subject"	3.89
+"GSE56232"	"remission_vs_ND"	"adjusted"	20103	3915	836	12	5	"subject"	3.89
+"GSE56232"	"remission_vs_ND"	"sensitivity_glucocorticoid"	20103	3150	138	12	4	"subject+glucocorticoid"	3.13

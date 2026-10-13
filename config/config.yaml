@@ -18,7 +18,9 @@ qc:
   near_duplicate_r: 0.995     # Pearson r above which two distinct files are flagged as the same RNA
 
 annotation:
-  ensembl_mirror: [www, useast, asia]   # tried in order; result cached under data/
+  # Gene models + transcript sequences for probe re-mapping (Ensembl BioMart is no longer usable)
+  gencode_base: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human
+  gencode_release: 50
 
 # Covariates for the "adjusted" limma model of each cohort (names refer to config/gene_sets.yaml
 # scores, plus "sex"). An unadjusted model is always fitted alongside for comparison.

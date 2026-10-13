@@ -32,11 +32,14 @@ for (id in run) {
     failed <- c(failed, id)
   } else {
     message("\n========== step ", id, ": ", st$file, " ==========")
+    tb <- character()
     res <- tryCatch({
-      sys.source(st$file, envir = new.env(parent = globalenv()))
+      withCallingHandlers(sys.source(st$file, envir = new.env(parent = globalenv())),
+        error = function(e) tb <<- vapply(sys.calls(), function(cl) paste(deparse(cl, nlines = 1), collapse = ""), ""))
       list(status = "ok", message = "")
     }, error = function(e) {
       message("ERROR in step ", id, ": ", conditionMessage(e))
+      message("Traceback (innermost last):\n  ", paste(tail(head(tb, -2), 8), collapse = "\n  "))
       list(status = "FAILED", message = gsub("[\r\n\t|]+", " ", substr(conditionMessage(e), 1, 300)))
     })
     if (res$status != "ok") failed <- c(failed, id)

@@ -1,8 +1,9 @@
 # Step 01 - Expression preprocessing, re-annotation and confounder estimation.
 #
 # GPL570 (GSE46922 + GSE56232, sorted T cells): RMA on the de-duplicated raw CEL files, array QC,
-#   probe re-annotation against the current Ensembl release (probe-sequence alignments are redone by
-#   Ensembl each release) compared with the legacy hgu133plus2.db mapping.
+#   and a BrainArray-style sequence-level re-annotation: every 25-mer probe is matched exactly against
+#   the current GENCODE transcriptome, and a probe set is assigned to a gene only when most of its
+#   probes hit that gene uniquely. Compared with the GEO GPL570 table used by earlier reanalyses.
 # GPL10845 (GSE23754, whole blood, two-colour): GEO-processed log2(Cy5/Cy3) ratios; the 2006-era
 #   clone annotation is updated through Entrez ID / HGNC alias tables. The raw .gpr files cannot be
 #   reprocessed because their spot identifiers are blank (no GAL file was deposited).
@@ -11,46 +12,27 @@
 source("R/utils.R")
 suppressPackageStartupMessages({
   library(Biobase); library(affy); library(limma)
-  library(AnnotationDbi); library(org.Hs.eg.db); library(hgu133plus2.db)
+  library(AnnotationDbi); library(org.Hs.eg.db)
 })
 
-ann_dir <- file.path(DATA, "annotation")
-dir.create(ann_dir, showWarnings = FALSE)
+gc_dir <- file.path(DATA, "gencode")
+gc_url <- function(f) sprintf("%s/release_%d/gencode.v%d.%s", cfg$annotation$gencode_base,
+                              cfg$annotation$gencode_release, cfg$annotation$gencode_release, f)
+annotation_source <- sprintf("GENCODE v%d", cfg$annotation$gencode_release)
 
-# ---------------------------------------------------------------- Ensembl annotation (cached)
-biomart_query <- function(attrs, cache) {
-  f <- file.path(ann_dir, cache)
-  if (file.exists(f)) return(fread(f))
-  for (m in cfg$annotation$ensembl_mirror) {
-    res <- tryCatch({
-      msg("Querying Ensembl BioMart (", m, ") for ", cache)
-      mart <- if (m == "www") biomaRt::useEnsembl("genes", "hsapiens_gene_ensembl")
-              else biomaRt::useEnsembl("genes", "hsapiens_gene_ensembl", mirror = m)
-      as.data.table(biomaRt::getBM(attrs, mart = mart))
-    }, error = function(e) { msg("  BioMart failed: ", conditionMessage(e)); NULL })
-    if (!is.null(res) && nrow(res) > 0) { fwrite(res, f, sep = "\t"); return(res) }
-  }
-  NULL
-}
-
-genes_bm <- biomart_query(c("ensembl_gene_id", "external_gene_name", "gene_biotype",
-                            "chromosome_name", "start_position", "end_position"), "ensembl_genes.tsv")
-if (is.null(genes_bm)) {
-  msg("BioMart unavailable - falling back to EnsDb.Hsapiens.v86 gene coordinates")
-  suppressPackageStartupMessages(library(EnsDb.Hsapiens.v86))
-  g <- ensembldb::genes(EnsDb.Hsapiens.v86)
-  genes_bm <- data.table(ensembl_gene_id = g$gene_id, external_gene_name = g$gene_name,
-                         gene_biotype = g$gene_biotype, chromosome_name = as.character(GenomicRanges::seqnames(g)),
-                         start_position = GenomicRanges::start(g), end_position = GenomicRanges::end(g))
-  annotation_source <- "EnsDb.Hsapiens.v86 (fallback)"
-} else annotation_source <- "Ensembl BioMart (current release)"
-gene_lookup <- unique(genes_bm[chromosome_name %in% c(1:22, "X", "Y", "MT")],
-                      by = "ensembl_gene_id")
-setnames(gene_lookup, c("ensembl_gene_id", "external_gene_name", "gene_biotype", "chromosome_name",
-                        "start_position", "end_position"),
-         c("gene_id", "symbol", "biotype", "chr", "start", "end"))
-gene_lookup[symbol == "", symbol := gene_id]
+# ---------------------------------------------------------------- gene coordinates (GENCODE GTF)
+gtf <- download_once(gc_url("basic.annotation.gtf.gz"), file.path(gc_dir, "basic.annotation.gtf.gz"))
+gl <- fread(cmd = sprintf("gzip -dc '%s' | awk -F'\\t' -v OFS='\\t' '$3==\"gene\"{print $1,$4,$5,$9}'", gtf),
+            header = FALSE, sep = "\t", quote = "", col.names = c("chr", "start", "end", "attr"))
+attr_of <- function(a, key) sub(sprintf('.*%s "([^"]+)".*', key), "\\1", a)
+gene_lookup <- gl[, .(gene_id = sub("\\..*", "", attr_of(attr, "gene_id")),
+                      par_y = grepl("_PAR_Y", attr_of(attr, "gene_id")),
+                      symbol = attr_of(attr, "gene_name"), biotype = attr_of(attr, "gene_type"),
+                      chr = sub("^chr", "", chr), start, end)]
+gene_lookup <- unique(gene_lookup[par_y == FALSE][, par_y := NULL], by = "gene_id")
+gene_lookup[chr == "M", chr := "MT"]
 save_rds(gene_lookup, "gene_lookup")
+msg("GENCODE v", cfg$annotation$gencode_release, ": ", nrow(gene_lookup), " genes")
 
 # Symbol-keyed copy of an Ensembl-keyed matrix (for marker-set scoring by symbol).
 to_symbol <- function(mat) {
@@ -106,45 +88,70 @@ if (isTRUE(cfg$qc$drop_outliers) && any(qc$outlier)) {
   probe_mat <- probe_mat[, !qc$outlier]; uniq <- uniq[gsm %in% colnames(probe_mat)]
 }
 
-# ---- probe re-annotation: legacy Bioconductor package vs current Ensembl alignment
+# ---- probe re-annotation: GEO GPL570 table (what earlier reanalyses used) vs GENCODE sequence match
 probes <- rownames(probe_mat)
-legacy_sym <- mapIds(hgu133plus2.db, probes, "SYMBOL", "PROBEID", multiVals = "first")
-legacy_ens <- mapIds(hgu133plus2.db, probes, "ENSEMBL", "PROBEID", multiVals = "first")
-affy_bm <- biomart_query(c("affy_hg_u133_plus_2", "ensembl_gene_id"), "ensembl_affy_hg_u133_plus_2.tsv")
-if (!is.null(affy_bm)) {
-  affy_bm <- affy_bm[affy_hg_u133_plus_2 != "" & ensembl_gene_id %in% gene_lookup$gene_id]
-  n_genes_per_probe <- affy_bm[, .(n = uniqueN(ensembl_gene_id), gene = ensembl_gene_id[1]), by = affy_hg_u133_plus_2]
-  current_ens <- setNames(rep(NA_character_, length(probes)), probes)
-  uni <- n_genes_per_probe[n == 1]
-  current_ens[uni$affy_hg_u133_plus_2[uni$affy_hg_u133_plus_2 %in% probes]] <-
-    uni$gene[uni$affy_hg_u133_plus_2 %in% probes]
-  ambiguous <- n_genes_per_probe[n > 1, affy_hg_u133_plus_2]
-  reannotated <- TRUE
-} else {
-  msg("Current probe mapping unavailable - using legacy hgu133plus2.db mapping")
-  current_ens <- legacy_ens; ambiguous <- character(); reannotated <- FALSE
+gpl_fd <- fData(readRDS(file.path(DATA, "geo", paste0(cfg$geo$gpl570[1], "_eset.rds"))))
+legacy_sym <- trimws(sub(" ///.*", "", gpl_fd[["Gene Symbol"]][match(probes, gpl_fd$ID)]))
+legacy_sym[legacy_sym == ""] <- NA
+
+map_file <- file.path(gc_dir, "gpl570_probeset_to_gene.tsv")
+if (!file.exists(map_file)) {
+  suppressPackageStartupMessages({ library(Biostrings); library(hgu133plus2probe) })
+  fa <- download_once(gc_url("transcripts.fa.gz"), file.path(gc_dir, "transcripts.fa.gz"))
+  tx <- readDNAStringSet(fa)
+  tx_gene <- sub("\\..*", "", vapply(strsplit(names(tx), "|", fixed = TRUE), `[`, "", 2))
+  pr <- as.data.table(as.data.frame(hgu133plus2probe))
+  # PM probes are complementary to the mRNA; confirm orientation empirically on a transcript subset
+  pd_rc <- PDict(reverseComplement(DNAStringSet(pr$sequence)))
+  pd_fw <- PDict(DNAStringSet(pr$sequence))
+  sub_tx <- tx[seq_len(min(5000, length(tx)))]
+  n_rc <- sum(lengths(vwhichPDict(pd_rc, sub_tx))); n_fw <- sum(lengths(vwhichPDict(pd_fw, sub_tx)))
+  msg("Probe orientation check on 5000 transcripts: reverse-complement hits = ", n_rc, ", forward = ", n_fw)
+  pd <- if (n_rc >= n_fw) pd_rc else pd_fw
+  rm(pd_rc, pd_fw); invisible(gc())
+  msg("Matching ", nrow(pr), " probes against ", length(tx), " GENCODE transcripts")
+  hits <- vwhichPDict(pd, tx)
+  ph <- unique(data.table(probe_idx = unlist(hits), gene = rep(tx_gene, lengths(hits))))
+  ph <- ph[, if (uniqueN(gene) == 1) .SD, by = probe_idx]          # drop probes hitting >1 gene
+  ph[, probeset := pr$Probe.Set.Name[probe_idx]]
+  n_per_set <- pr[, .(n_probes = .N), by = .(probeset = Probe.Set.Name)]
+  cnt <- ph[, .N, by = .(probeset, gene)][order(probeset, -N)]
+  best <- cnt[, .(gene = gene[1], top = N[1], second = if (.N > 1) N[2] else 0L), by = probeset]
+  best <- merge(n_per_set, best, by = "probeset", all.x = TRUE)
+  # assign when at least half the probes hit one gene uniquely and it clearly dominates any second gene
+  best[, assigned := !is.na(top) & top >= ceiling(n_probes / 2) & top >= 2 * second]
+  fwrite(best, map_file, sep = "\t")
 }
-probe_ann <- data.table(probe = probes, legacy_symbol = legacy_sym, legacy_gene = legacy_ens,
-                        current_gene = current_ens)
+best <- fread(map_file)
+current_ens <- setNames(best$gene[match(probes, best$probeset)], probes)
+current_ens[!best$assigned[match(probes, best$probeset)] %in% TRUE] <- NA
+ambiguous <- best[assigned == FALSE & !is.na(top), probeset]
+reannotated <- TRUE
+
+probe_ann <- data.table(probe = probes, legacy_symbol = legacy_sym, current_gene = current_ens)
 probe_ann[, current_symbol := gene_lookup$symbol[match(current_gene, gene_lookup$gene_id)]]
 probe_ann[, current_biotype := gene_lookup$biotype[match(current_gene, gene_lookup$gene_id)]]
+renamed <- suppressWarnings(alias2SymbolTable(ifelse(is.na(probe_ann$legacy_symbol), "NA_none",
+                                                     probe_ann$legacy_symbol), "Hs"))
+probe_ann[, renamed := renamed]
 probe_ann[, status := fcase(
-  is.na(legacy_gene) & is.na(current_gene) & probe %in% ambiguous, "ambiguous_now (multi-gene)",
-  is.na(legacy_gene) & is.na(current_gene), "unmapped_both",
-  is.na(legacy_gene) & !is.na(current_gene), "recovered (new mapping)",
-  !is.na(legacy_gene) & is.na(current_gene) & probe %in% ambiguous, "lost: now multi-gene",
-  !is.na(legacy_gene) & is.na(current_gene), "lost: no longer maps",
-  legacy_gene == current_gene, "unchanged",
-  default = "reassigned to different gene")]
+  is.na(legacy_symbol) & is.na(current_gene) & probe %in% ambiguous, "unmapped: probes hit several genes",
+  is.na(legacy_symbol) & is.na(current_gene), "unmapped_both",
+  is.na(legacy_symbol) & !is.na(current_gene), "recovered (no GPL570 symbol, now maps)",
+  !is.na(legacy_symbol) & is.na(current_gene) & probe %in% ambiguous, "lost: probes now hit several genes",
+  !is.na(legacy_symbol) & is.na(current_gene), "lost: probes no longer match a transcript",
+  legacy_symbol %in% current_symbol & legacy_symbol == current_symbol, "unchanged",
+  !is.na(renamed) & !is.na(current_symbol) & renamed == current_symbol, "same gene, renamed",
+  default = "reassigned to a different gene")]
 write_tab(probe_ann, "gpl570_probe_reannotation")
 reannot_summary <- probe_ann[, .N, by = status][order(-N)]
-legacy_genes <- unique(na.omit(probe_ann$legacy_gene)); current_genes <- unique(na.omit(probe_ann$current_gene))
-new_genes <- setdiff(current_genes, legacy_genes)
-biotype_new <- gene_lookup[gene_id %in% new_genes, .N, by = biotype][order(-N)]
+legacy_genes <- unique(na.omit(probe_ann$legacy_symbol)); current_genes <- unique(na.omit(probe_ann$current_symbol))
+new_genes <- setdiff(current_genes, union(legacy_genes, na.omit(renamed)))
+biotype_new <- gene_lookup[symbol %in% new_genes, .N, by = biotype][order(-N)]
 write_tab(reannot_summary, "gpl570_reannotation_summary")
 write_tab(biotype_new, "gpl570_reannotation_new_gene_biotypes")
-msg("Re-annotation: ", length(legacy_genes), " legacy genes -> ", length(current_genes),
-    " current genes; ", length(new_genes), " genes newly measurable")
+msg("Re-annotation: ", length(legacy_genes), " GPL570-table genes -> ", length(current_genes),
+    " GENCODE genes; ", length(new_genes), " genes newly measurable")
 
 gpl570_expr <- collapse_to_genes(probe_mat, current_ens)
 gpl570_sc <- confounder_scores(to_symbol(gpl570_expr))

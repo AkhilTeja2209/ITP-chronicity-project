@@ -147,7 +147,7 @@ write_tab(probe_ann, "gpl570_probe_reannotation")
 reannot_summary <- probe_ann[, .N, by = status][order(-N)]
 legacy_genes <- unique(na.omit(probe_ann$legacy_symbol)); current_genes <- unique(na.omit(probe_ann$current_symbol))
 new_genes <- setdiff(current_genes, union(legacy_genes, na.omit(renamed)))
-biotype_new <- gene_lookup[symbol %in% new_genes, .N, by = biotype][order(-N)]
+biotype_new <- unique(gene_lookup[symbol %in% new_genes], by = "symbol")[, .N, by = biotype][order(-N)]
 write_tab(reannot_summary, "gpl570_reannotation_summary")
 write_tab(biotype_new, "gpl570_reannotation_new_gene_biotypes")
 msg("Re-annotation: ", length(legacy_genes), " GPL570-table genes -> ", length(current_genes),

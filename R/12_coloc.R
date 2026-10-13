@@ -14,10 +14,12 @@ eqtl_dir <- normalizePath(file.path(DATA, "eqtl"), mustWork = FALSE)
 dir.create(eqtl_dir, recursive = TRUE, showWarnings = FALSE)
 helper <- normalizePath("R/tabix_query.py")
 python <- Sys.getenv("PYTHON", "python3")
+# R exports LD_LIBRARY_PATH entries that make a non-system Python load the wrong libpython
+py_env <- "LD_LIBRARY_PATH="
 chk <- suppressWarnings(system2(python, c("-c", shQuote("import sys; print(sys.path); import pysam; print(pysam.__version__)")),
-                                stdout = TRUE, stderr = TRUE))
+                                stdout = TRUE, stderr = TRUE, env = py_env))
 chk <- rev(chk)
-if (!is.null(attr(chk, "status"))) stop("Python with pysam is required (pip install pysam); ", python, " said: ", paste(chk, collapse = " "))
+if (!is.null(attr(chk, "status")) || any(grepl("Error", chk))) stop("Python with pysam is required (pip install pysam); ", python, " said: ", paste(chk, collapse = " "))
 msg("Using ", python, " with pysam ", chk[1])
 
 # Neither file marks its header with '#', so `tabix -h` does not return it: read the column names
@@ -34,7 +36,7 @@ file_header <- function(src) {
 tabix <- function(src, region, cwd = getwd()) {
   err <- tempfile()
   out <- withr::with_dir(cwd, suppressWarnings(system2(python, c(shQuote(helper), shQuote(src), region),
-                                                       stdout = TRUE, stderr = err)))
+                                                       stdout = TRUE, stderr = err, env = py_env)))
   if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(tail(readLines(err, warn = FALSE), 3), collapse = " | "))
   out <- sub("\r$", "", out)
   if (!length(out)) return(NULL)

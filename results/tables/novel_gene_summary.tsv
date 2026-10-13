@@ -1,0 +1,3 @@
+contrast	genes_tested	fdr_hits	new_genes_tested	new_gene_hits	new_lncRNA_hits	robust_new_hits	robust_new_hits_reversing	fisher_p_new_enriched	odds_ratio
+"chronic_vs_ND"	20103	663	3290	43	NA	41	3	0.999999999999998	0.345886974480823
+"remission_vs_ND"	20103	836	3290	58	NA	7	0	1	0.369876292710306

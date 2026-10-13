@@ -48,9 +48,14 @@ if (nrow(leads) == 0) {
 }
 msg(nrow(leads), " loci: ", locus_mode)
 gene_lookup <- load_rds("gene_lookup")
-loci <- leads[, .(locus = paste0("L", seq_len(.N)), chr = as.character(chromosome), lead_pos = base_pair_location,
-                  lead_rsid = rsid, effect_allele, other_allele, beta, se = standard_error, p = p_value, maf,
-                  start = pmax(1, base_pair_location - w), end = base_pair_location + w)]
+msg("GWAS columns read: ", paste(names(leads), collapse = ","))
+lead_id <- if ("rsid" %in% names(leads)) leads[["rsid"]] else
+  paste(leads$chromosome, leads$base_pair_location, leads$other_allele, leads$effect_allele, sep = ":")
+loci <- data.table(locus = paste0("L", seq_len(nrow(leads))), chr = as.character(leads$chromosome),
+                   lead_pos = leads$base_pair_location, lead_rsid = lead_id,
+                   effect_allele = leads$effect_allele, other_allele = leads$other_allele, beta = leads$beta,
+                   se = leads$standard_error, p = leads$p_value, maf = leads$maf,
+                   start = pmax(1, leads$base_pair_location - w), end = leads$base_pair_location + w)
 loci[, mhc := chr == "6" & end > 25e6 & start < 34e6]
 loci[, genes_in_window := vapply(seq_len(.N), function(i) {
   g <- gene_lookup[chr == loci$chr[i] & end >= loci$start[i] & start <= loci$end[i] &

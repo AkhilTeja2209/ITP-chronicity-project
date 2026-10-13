@@ -42,7 +42,7 @@ if (!is.null(wg)) {
 }
 if (!is.null(twas)) ev[twas, `:=`(twas_z = i.z, twas_p = i.p, twas_fdr = i.fdr), on = "gene_id"]
 if (!is.null(coloc) && nrow(coloc)) {
-  cbest <- coloc[order(-PP.H4)][!duplicated(gene_id), .(gene_id, coloc_PP4 = PP.H4, coloc_dataset = eqtl_dataset,
+  cbest <- coloc[credible == TRUE][order(-PP.H4)][!duplicated(gene_id), .(gene_id, coloc_PP4 = PP.H4, coloc_dataset = eqtl_dataset,
                                                          coloc_locus = locus, risk_allele_raises_expression)]
   ev <- merge(ev, cbest, by = "gene_id", all.x = TRUE)
 }

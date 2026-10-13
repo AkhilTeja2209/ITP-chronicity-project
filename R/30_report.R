@@ -82,7 +82,9 @@ L <- c(
     paste(sprintf("%d locus-gene-tissue tests; %d with PP.H4 > %.1f (shared causal variant)%s.",
                   nrow(coloc), nrow(hits), cfg$coloc$pp4,
                   if (nrow(hits)) paste0(": ", paste(unique(sprintf("%s (%s)", hits$symbol, hits$eqtl_dataset)), collapse = ", ")) else ""),
-          if (nrow(hits) && all(hits$mhc)) "**[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping." else "")
+          if (nrow(hits) && all(hits$mhc)) "**[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping." else "",
+          if (nrow(hits)) sprintf("**[auto]** %d of these %d pass the credibility check (best GWAS p among the shared SNPs < %g); only credible results count towards filter F4.",
+                                  sum(hits$credible), nrow(hits), cfg$coloc$min_gwas_p_shared) else "")
   } else "",
   "", tbl("coloc_results", max_rows = 20), "", fig("coloc_top_loci"), "",
   "## 4. Integration", "",

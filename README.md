@@ -15,7 +15,7 @@ reproducible pipeline that asks two questions:
 It then tests whether the two layers converge more than chance, and benchmarks the resulting
 signature against a baseline on a held-out cohort from a different platform.
 
-**Latest results:** see the [`results` branch](../../tree/results), rebuilt by GitHub Actions on every push.
+**Latest results:** [`results/REPORT.md`](results/REPORT.md) (tables and figures alongside), rebuilt and committed by GitHub Actions on every run. Slides for presenting them: [`docs/ITP_chronicity_results.pptx`](docs/ITP_chronicity_results.pptx).
 
 ## Why this design (short version)
 
@@ -80,7 +80,7 @@ All parameters are in [`config/config.yaml`](config/config.yaml); marker gene se
 **On GitHub (default).** Every push to `main` that touches code runs `.github/workflows/pipeline.yml`
 (about 30 minutes on the first run, mostly package installation and downloads; both are cached afterwards).
 To re-run by hand, use *Actions → pipeline → Run workflow*, optionally listing step ids such as `20 21`.
-Outputs are uploaded as an artifact and pushed to the `results` branch.
+Outputs are uploaded as an artifact and committed to `results/` on `main`.
 
 **Locally** (Linux/macOS; on Windows use WSL). Needs R ≥ 4.4 and Python 3 with `pysam` (`pip install pysam`), used for region queries of remote eQTL files:
 

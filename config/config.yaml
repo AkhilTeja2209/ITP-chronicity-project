@@ -78,6 +78,7 @@ coloc:
   p2: 1.0e-4
   p12: 1.0e-5
   pp4: 0.5
+  min_gwas_p_shared: 1.0e-5   # a coloc result only counts if the shared SNPs carry real GWAS signal
 
 # ---------------------------------------------------------------- integration + benchmark
 integration:

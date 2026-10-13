@@ -80,6 +80,9 @@ for (i in seq_len(nrow(loci))) {
       results[[length(results) + 1]] <- data.table(
         locus = L$locus, chr = L$chr, lead_rsid = L$lead_rsid, lead_p = L$p, mhc = L$mhc,
         eqtl_dataset = ds$label, gene_id = gid, nsnps = nrow(j),
+        # coloc assumes the tested SNPs contain the GWAS causal variant; when the eQTL window only
+        # clips the edge of the locus, a high PP.H4 can arise from weak GWAS signal. Record it.
+        gwas_min_p_shared = min(j$gp), credible = min(j$gp) < cfg$coloc$min_gwas_p_shared,
         PP.H0 = cr$summary[["PP.H0.abf"]], PP.H1 = cr$summary[["PP.H1.abf"]], PP.H2 = cr$summary[["PP.H2.abf"]],
         PP.H3 = cr$summary[["PP.H3.abf"]], PP.H4 = cr$summary[["PP.H4.abf"]],
         top_snp = top$snp, top_snp_PP4 = top$SNP.PP.H4,

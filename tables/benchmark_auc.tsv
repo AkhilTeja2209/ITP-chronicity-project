@@ -1,0 +1,15 @@
+task	model	n	n_cases	AUC	CI_low	CI_high	permutation_p	random_geneset_p	beats_chance
+"T1_progression_vs_acute"	"platelet_score_only"	12	4	0.25	0	0.739990996135013	0.926	NA	FALSE
+"T1_progression_vs_acute"	"Tcell_signature_GSE46922"	12	4	0.34375	0	0.70880464520298	0.824	0.804	FALSE
+"T1_progression_vs_acute"	"integrated_signature"	12	4	0.53125	0.174110759078676	0.888389240921324	0.466	0.458	FALSE
+"T1_progression_vs_acute"	"module_pink"	12	4	0.4375	0.074900356724501	0.800099643275499	0.6655	NA	FALSE
+"T1_progression_vs_acute"	"baseline_logistic_LOOCV"	12	4	0.53125	0.0803714275773982	0.982128572422602	0.4675	NA	FALSE
+"T1_progression_vs_acute"	"baseline_plus_Tcell_signature_LOOCV"	12	4	0.53125	0.104805660254716	0.957694339745284	0.4965	NA	FALSE
+"T1_progression_vs_acute"	"within_cohort_elastic_net_nestedLOOCV"	12	4	0.4375	0.0182375049134175	0.856762495086583	0.66	NA	FALSE
+"T2_eventual_chronic_vs_acute"	"platelet_score_only"	26	18	0.291666666666667	0.091084654163563	0.49224867916977	0.9525	NA	FALSE
+"T2_eventual_chronic_vs_acute"	"Tcell_signature_GSE46922"	26	18	0.423611111111111	0.15998772149909	0.687234500723132	0.7325	0.72	FALSE
+"T2_eventual_chronic_vs_acute"	"integrated_signature"	26	18	0.597222222222222	0.288294754511999	0.906149689932445	0.228	0.298	FALSE
+"T2_eventual_chronic_vs_acute"	"module_pink"	26	18	0.375	0.103802645546098	0.646197354453902	0.8365	NA	FALSE
+"T2_eventual_chronic_vs_acute"	"baseline_logistic_LOOCV"	26	18	0.763888888888889	0.51743624046557	1	0.0205	NA	TRUE
+"T2_eventual_chronic_vs_acute"	"baseline_plus_Tcell_signature_LOOCV"	26	18	0.715277777777778	0.466968692653851	0.963586862901705	0.05	NA	FALSE
+"T2_eventual_chronic_vs_acute"	"within_cohort_elastic_net_nestedLOOCV"	26	18	0.5	0.241836478416007	0.758163521583993	0.5165	NA	FALSE

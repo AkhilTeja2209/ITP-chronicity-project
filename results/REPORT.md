@@ -1,6 +1,6 @@
 # Pediatric ITP chronicity: integrated variant x expression analysis - results
 
-_Generated 2026-10-13 14:25 UTC by the automated pipeline (commit `1caba96`, R version 4.6.1 (2026-06-24))._
+_Generated 2026-10-25 15:37 UTC by the automated pipeline (commit `cdc51f8`, R version 4.6.1 (2026-06-24))._
 
 > Everything below is produced by code in this repository from public data. Numbers are recomputed
 > on every run; interpretation sentences marked **[auto]** are generated from the numbers, not written by hand.
@@ -9,16 +9,17 @@ _Generated 2026-10-13 14:25 UTC by the automated pipeline (commit `1caba96`, R v
 
 | step | script | status | minutes | message |
 |---|---|---|---|---|
-| 00 | R/00_audit.R | ok | 0.2 |  |
-| 01 | R/01_expression.R | ok | 0.7 |  |
+| 00 | R/00_audit.R | ok | 0.9 |  |
+| 01 | R/01_expression.R | ok | 7.2 |  |
 | 02 | R/02_differential_expression.R | ok | 0.1 |  |
-| 03 | R/03_modules_enrichment.R | ok | 0.8 |  |
+| 03 | R/03_modules_enrichment.R | ok | 0.7 |  |
 | 04 | R/04_novel_genes.R | ok | 0.1 |  |
-| 10 | R/10_gwas.R | ok | 0.7 |  |
-| 11 | R/11_twas.R | ok | 0.8 |  |
-| 12 | R/12_coloc.R | ok | 9.7 |  |
+| 10 | R/10_gwas.R | ok | 9.2 |  |
+| 11 | R/11_twas.R | ok | 2.9 |  |
+| 12 | R/12_coloc.R | ok | 8 |  |
+| 13 | R/13_replication.R | ok | 0 |  |
 | 20 | R/20_integration.R | ok | 0 |  |
-| 21 | R/21_benchmark.R | ok | 1.1 |  |
+| 21 | R/21_benchmark.R | ok | 0.9 |  |
 
 ## 1. Data audit
 
@@ -295,32 +296,40 @@ GWAS GCST90018865: lambda_GC = 1.012; 0 variants at p<5e-8; loci defined as **in
 
 ### Colocalisation
 
-67 locus-gene-tissue tests; 1 with PP.H4 > 0.5 (shared causal variant): HLA-C (GTEx_v10_whole_blood). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 1 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
+131 locus-gene-tissue tests; 2 with PP.H4 > 0.5 (shared causal variant): HLA-C (GTEx_v10_whole_blood), HLA-C (BLUEPRINT_CD4_T_cell). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 2 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
 
 | locus | chr | lead_rsid | lead_p | mhc | eqtl_dataset | gene_id | nsnps | gwas_min_p_shared | credible | PP.H0 | PP.H1 | PP.H2 | PP.H3 | PP.H4 | top_snp | top_snp_PP4 | risk_allele_raises_expression | symbol |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204525 |  515 | 6.17e-05 | FALSE | 1.09e-08 | 2.65e-09 | 0.138 | 0.0327 | 0.83 | 32226853_G_C | 0.307 | TRUE | HLA-C |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204525 |  487 | 6.17e-05 | FALSE | 5.66e-06 | 1.42e-06 | 0.297 | 0.0737 | 0.63 | 32249315_T_C | 0.801 | TRUE | HLA-C |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000234745 | 1213 | 4.26e-05 | FALSE | 0.0685 | 0.0466 | 0.293 | 0.199 | 0.393 | 32249315_T_C | 0.538 | TRUE | HLA-B |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000272221 | 1620 | 4.26e-05 | FALSE | 0.00261 | 0.0024 | 0.335 | 0.308 | 0.352 | 32226818_A_C | 0.726 | TRUE | MICA-AS1 |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204428 | 6906 | 2.17e-06 | TRUE | 0.0024 | 0.019 | 0.0764 | 0.603 | 0.299 | 32606583_C_T | 0.0794 | TRUE | LY6G5C |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000234745 | 1071 | 4.26e-05 | FALSE | 0.0184 | 0.0125 | 0.409 | 0.278 | 0.282 | 32249315_T_C | 0.55 | TRUE | HLA-B |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000030110 | 10662 | 6.29e-07 | TRUE | 0.0069 | 0.272 | 0.0123 | 0.485 | 0.224 | 32725352_C_T | 0.0664 | TRUE | BAK1 |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204444 | 5861 | 2.17e-06 | TRUE | 0.0462 | 0.348 | 0.0479 | 0.361 | 0.197 | 32616054_G_C | 0.275 | FALSE | APOM |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000289375 | 4842 | 1.37e-06 | TRUE | 0.0246 | 0.261 | 0.0463 | 0.491 | 0.177 | 32616054_G_C | 0.0527 | FALSE | ENSG00000289375 |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000213719 | 8844 | 6.29e-07 | TRUE | 0.00314 | 0.118 | 0.0183 | 0.689 | 0.171 | 32316331_T_G | 0.0387 | FALSE | CLIC1 |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000286940 | 2857 | 2.17e-06 | TRUE | 0.0811 | 0.452 | 0.0468 | 0.26 | 0.16 | 32446513_A_G | 0.547 | TRUE | MICB-DT |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000272221 | 1461 | 4.26e-05 | FALSE | 0.186 | 0.172 | 0.256 | 0.237 | 0.149 | 32372063_T_A | 0.431 | TRUE | MICA-AS1 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000198563 | 2904 | 1.37e-06 | TRUE | 0.0643 | 0.573 | 0.0234 | 0.209 | 0.13 | 32486584_C_T | 0.163 | FALSE | DDX39B |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204386 | 10339 | 6.29e-07 | TRUE | 0.00432 | 0.193 | 0.015 | 0.668 | 0.12 | 32486501_C_T | 0.178 | FALSE | NEU1 |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204520 | 1640 | 4.26e-05 | FALSE | 0.267 | 0.248 | 0.192 | 0.177 | 0.116 | 32371771_G_A | 0.584 | TRUE | MICA |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204308 | 13720 | 6.29e-07 | TRUE | 0.0106 | 0.392 | 0.0131 | 0.486 | 0.0981 | 32725352_C_T | 0.0444 | TRUE | RNF5 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000232940 | 13569 | 6.29e-07 | TRUE | 0.0119 | 0.447 | 0.0116 | 0.436 | 0.0938 | 32725352_C_T | 0.0624 | FALSE | HCG25 |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000204252 | 13829 | 6.29e-07 | TRUE | 0.0117 | 0.432 | 0.0124 | 0.457 | 0.0864 | 32725352_C_T | 0.0458 | FALSE | HLA-DOA |
 | L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204351 | 10858 | 6.29e-07 | TRUE | 0.00145 | 0.0618 | 0.0197 | 0.839 | 0.0778 | 32616054_G_C | 0.0475 | FALSE | SKIC2 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204257 | 13605 | 6.29e-07 | TRUE | 0.00383 | 0.131 | 0.0227 | 0.776 | 0.067 | 32961207_A_G | 0.094 | TRUE | HLA-DMA |
-| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000116205 | 3068 | 0.00196 | FALSE | 0.017 | 0.0036 | 0.762 | 0.162 | 0.0562 | 54093410_A_C | 0.057 | TRUE | TCEANC2 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204305 | 13500 | 6.29e-07 | TRUE | 0.0137 | 0.472 | 0.0129 | 0.446 | 0.0562 | 32725352_C_T | 0.0623 | TRUE | AGER |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000166278 | 10560 | 6.29e-07 | TRUE | 0.00497 | 0.217 | 0.0162 | 0.707 | 0.0552 | 32381780_A_T | 0.0807 | TRUE | C2 |
-| L3 |    5 | rs112156751 | 4.24e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000170234 | 3242 | 4.24e-07 | TRUE | 0.113 | 0.0669 | 0.484 | 0.287 | 0.0497 | 159977433_G_T | 0.332 | FALSE | PWWP2A |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000204475 | 3360 | 2.17e-06 | TRUE | 0.0921 | 0.532 | 0.0485 | 0.28 | 0.0477 | 32486501_C_T | 0.124 | FALSE | NCR3 |
-| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | GTEx_v10_whole_blood | ENSG00000228727 | 9202 | 6.29e-07 | TRUE | 0.0127 | 0.575 | 0.00791 | 0.357 | 0.0471 | 32725352_C_T | 0.0694 | FALSE | SAPCD1 |
-| L2 |    8 | rs113868754 | 1.60e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000104427 | 3123 | 1.60e-07 | TRUE | 3.14e-19 | 1.66e-19 | 0.627 | 0.331 | 0.0419 | 78655847_G_A | 0.103 | FALSE | ZC2HC1A |
-| L1 |    1 | rs573928622 | 1.50e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000215883 | 3068 | 0.00196 | FALSE | 0.156 | 0.0332 | 0.636 | 0.135 | 0.0398 | 54154524_G_A | 0.899 | TRUE | CYB5RL |
-| L7 |   15 | rs1384122 | 7.11e-07 | FALSE | GTEx_v10_whole_blood | ENSG00000069667 | 2845 | 7.11e-07 | TRUE | 0.155 | 0.503 | 0.0712 | 0.232 | 0.0398 | 60828567_C_T |  0.7 | TRUE | RORA |
+| L6 |    6 | rs9275950 | 6.29e-07 | TRUE | BLUEPRINT_CD4_T_cell | ENSG00000227057 | 13263 | 6.29e-07 | TRUE | 0.0115 | 0.439 | 0.012 | 0.46 | 0.0775 | 32725352_C_T | 0.0723 | TRUE | WDR46 |
 
 ![coloc_top_loci](figures/coloc_top_loci.png)
+
+### Replication GWAS
+
+Not run: provide the replication file's download link as the repository secret `REPLICATION_GWAS_URL`.
+
+_(not available: upstream step did not run)_
+
+_(not available: upstream step did not run)_
 
 ## 4. Integration
 

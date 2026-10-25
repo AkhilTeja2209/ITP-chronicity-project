@@ -1,6 +1,6 @@
 # Pediatric ITP chronicity: integrated variant x expression analysis - results
 
-_Generated 2026-10-25 16:52 UTC by the automated pipeline (commit `f69f150`, R version 4.6.1 (2026-06-24))._
+_Generated 2026-10-25 17:00 UTC by the automated pipeline (commit `b6e90a6`, R version 4.6.1 (2026-06-24))._
 
 > Everything below is produced by code in this repository from public data. Numbers are recomputed
 > on every run; interpretation sentences marked **[auto]** are generated from the numbers, not written by hand.
@@ -11,15 +11,8 @@ _Generated 2026-10-25 16:52 UTC by the automated pipeline (commit `f69f150`, R v
 |---|---|---|---|---|
 | 00 | R/00_audit.R | ok | 0.2 |  |
 | 01 | R/01_expression.R | ok | 0.6 |  |
-| 02 | R/02_differential_expression.R | ok | 0.1 |  |
-| 03 | R/03_modules_enrichment.R | ok | 0.7 |  |
-| 04 | R/04_novel_genes.R | ok | 0.1 |  |
-| 10 | R/10_gwas.R | ok | 0.7 |  |
-| 11 | R/11_twas.R | ok | 0.8 |  |
-| 12 | R/12_coloc.R | ok | 1.8 |  |
-| 13 | R/13_replication.R | ok | 0 |  |
-| 20 | R/20_integration.R | ok | 0 |  |
-| 21 | R/21_benchmark.R | ok | 1.4 |  |
+| 10 | R/10_gwas.R | ok | 0.6 |  |
+| 12 | R/12_coloc.R | ok | 2.7 |  |
 
 ## 1. Data audit
 
@@ -180,7 +173,7 @@ Artefact check (fraction of the top-100 genes strongly correlated, |r|>0.6, with
 
 ### Co-expression modules
 
-13 modules (soft power 12). Cross-cohort behaviour of each module:
+
 
 | module | n_genes | n_genes_on_cdna | GSE46922_chronic_minus_ND | GSE46922_p | GSE56232_remission_minus_ND | GSE56232_paired_p | GSE23754_progression_minus_acute | GSE23754_progression_p | GSE23754_chronic_minus_acute | GSE23754_chronic_p | concordant |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -267,7 +260,7 @@ GWAS GCST90018865: lambda_GC = 1.012; 0 variants at p<5e-8; loci defined as **in
 
 ### TWAS (whole blood)
 
-12358 genes tested; 0 at FDR<0.10; 0 Bonferroni-significant.
+
 
 | model_gene | z | n_snps_used | gene_id | n_snps_model | p | fdr | bonferroni_sig | symbol | chr | start |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -348,7 +341,7 @@ Formal tests of whether genetic evidence and chronicity expression converge more
 | Spearman TWAS z vs t F3 | 10391 | NA | NA | NA | 0.02 | 0.041 | NA |
 | A priori: F2 BH-FDR<0.1 within top 1% TWAS genes (too few F4 genes) |  104 |  104 |    8 | NA | NA | 0.0508 | NA |
 
-**[auto]** 1 of 10 convergence tests reach nominal p<0.05 (Spearman TWAS z vs t F3); none survive Bonferroni correction for 10 tests (p<0.0050). Treat the convergence as not established.
+
 
 Top candidate genes (ranked by number of filters passed, then combined p):
 
@@ -408,7 +401,7 @@ Top candidate genes (ranked by number of filters passed, then combined p):
 | T2_eventual_chronic_vs_acute | baseline_plus_Tcell_signature_LOOCV |   26 |   18 | 0.715 | 0.467 | 0.964 | 0.05 | NA | FALSE |
 | T2_eventual_chronic_vs_acute | within_cohort_elastic_net_nestedLOOCV |   26 |   18 |  0.5 | 0.242 | 0.758 | 0.516 | NA | FALSE |
 
-**[auto]** Primary task T1 has 12 samples ( 4 progressors). Baseline AUC = 0.53; best model = integrated_signature (AUC 0.53, 95% CI 0.17-0.89, permutation p = 0.466). No model's confidence interval excludes 0.5; with 4 progressors this benchmark cannot distinguish a real signature from chance, which is the expected and reportable result at this n. In secondary task T2 (confounded by disease duration), only baseline_logistic_LOOCV beats chance (AUC 0.76, CI 0.52-1.00); transcriptomic signatures add nothing beyond it.
+
 
 ![benchmark_roc](figures/benchmark_roc.png)
 

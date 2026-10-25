@@ -38,6 +38,9 @@ tabix <- function(src, region, cwd = getwd()) {
   out <- withr::with_dir(cwd, suppressWarnings(system2(python, c(shQuote(helper), shQuote(src), region),
                                                        stdout = TRUE, stderr = err, env = py_env)))
   if (length(readLines(err, warn = FALSE))) msg("  tabix stderr: ", paste(tail(readLines(err, warn = FALSE), 3), collapse = " | "))
+  # A failed query must stop the step: skipping it would silently drop tests and make the
+  # colocalisation results change from run to run.
+  if (!is.null(attr(out, "status"))) stop("region query failed after retries: ", region, " in ", basename(src))
   out <- sub("\r$", "", out)
   if (!length(out)) return(NULL)
   fread(text = out, sep = "\t", header = FALSE, col.names = file_header(src), na.strings = c("NA", ""))
@@ -55,7 +58,7 @@ for (i in seq_len(nrow(loci))) {
   for (ds in cfg$eqtl$datasets) {
     url <- sprintf("%s/%s/%s/%s.all.tsv.gz", cfg$eqtl$base_url, ds$study, ds$dataset, ds$dataset)
     msg(L$locus, " ", region, " x ", ds$label)
-    eq <- tryCatch(tabix(url, region, eqtl_dir), error = function(e) { msg("  eQTL query error: ", conditionMessage(e)); NULL })
+    eq <- tabix(url, region, eqtl_dir)
     if (is.null(eq) || !nrow(eq)) { msg("  no eQTL rows returned"); next }
     eq <- eq[is.finite(beta) & is.finite(se) & se > 0 & type == "SNP"]
     genes <- eq[, .(minp = min(pvalue)), by = gene_id][minp < cfg$eqtl$min_eqtl_p, gene_id]

@@ -85,12 +85,12 @@ def score_auc(expr: pd.DataFrame, s: pd.DataFrame, case: str, up: list[str], dow
             "ci_high": np.percentile(boot, 97.5), "permutation_p": perm, "n_case": int(y.sum()), "n_ND": int((1 - y).sum())}
 
 
-def simulate(de: pd.DataFrame, case: str, rng) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Simulated dataset: 8 vs 8 samples, the discovery effects present at 40% of their size. NOT real data."""
+def simulate(de: pd.DataFrame, case: str, rng, effect: float = 0.4) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Simulated dataset: 8 vs 8 samples, discovery effects present at `effect` of their size (0 = none). NOT real data."""
     genes = de.gene_id.values
     n = 8
     base = rng.normal(6, 1.5, len(genes))[:, None] + rng.normal(0, 0.6, (len(genes), 2 * n))
-    eff = np.where(de["adj.P.Val"].values < 0.1, 0.4 * de.logFC.values, 0)
+    eff = np.where(de["adj.P.Val"].values < 0.1, effect * de.logFC.values, 0)
     base[:, :n] += eff[:, None]
     cols = [f"SIM_{case}_{i}" for i in range(n)] + [f"SIM_ND_{i}" for i in range(n)]
     expr = pd.DataFrame(base, index=genes, columns=cols)
@@ -103,13 +103,15 @@ def main() -> None:
     ap.add_argument("expression", nargs="?", type=Path)
     ap.add_argument("samples", nargs="?", type=Path)
     ap.add_argument("--demo", action="store_true")
+    ap.add_argument("--demo-effect", type=float, default=0.4,
+                    help="with --demo: share of the discovery effect planted in the simulated data (0 = no effect)")
     a = ap.parse_args()
     rng = np.random.default_rng(2026)
     simulated = a.demo
     if simulated:
         cohort, contrast, case = CONTRAST[frozenset({"ND", "chronic"})]
         de, nov = discovery(contrast, cohort)
-        expr, s = simulate(de, case, rng)
+        expr, s = simulate(de, case, rng, a.demo_effect)
     else:
         if not (a.expression and a.samples):
             ap.error("give expression.csv and samples.csv, or --demo")
@@ -146,7 +148,7 @@ def main() -> None:
     sc = score_auc(expr, s, case, list(sig[sig.logFC > 0].index), list(sig[sig.logFC < 0].index), rng)
 
     OUT.mkdir(exist_ok=True)
-    prefix = "demo_" if simulated else ""
+    prefix = (f"demo_effect{a.demo_effect:g}_" if a.demo_effect != 0.4 else "demo_") if simulated else ""
     conc.to_csv(OUT / f"{prefix}validation_concordance.csv", index=False)
     m.reset_index().to_csv(OUT / f"{prefix}validation_per_gene.csv", index=False)
     pd.DataFrame([sc]).to_csv(OUT / f"{prefix}validation_signature_auc.csv", index=False)

@@ -61,3 +61,6 @@ python local/validate_candidates.py local/data/expression.csv local/data/samples
 It compares each candidate's direction with the discovery result, runs a sign test, scores the
 discovery signature in the new samples (AUC with bootstrap CI) and writes
 `local/output/validation_report.html`.
+
+To test it without data: `--demo` plants 40% of the discovery effect in simulated samples (it should
+replicate), and `--demo --demo-effect 0` plants none (it should not). Both outputs are labelled simulated.

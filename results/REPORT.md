@@ -1,6 +1,6 @@
 # Pediatric ITP chronicity: integrated variant x expression analysis - results
 
-_Generated 2026-10-25 15:37 UTC by the automated pipeline (commit `cdc51f8`, R version 4.6.1 (2026-06-24))._
+_Generated 2026-10-25 16:52 UTC by the automated pipeline (commit `f69f150`, R version 4.6.1 (2026-06-24))._
 
 > Everything below is produced by code in this repository from public data. Numbers are recomputed
 > on every run; interpretation sentences marked **[auto]** are generated from the numbers, not written by hand.
@@ -9,17 +9,17 @@ _Generated 2026-10-25 15:37 UTC by the automated pipeline (commit `cdc51f8`, R v
 
 | step | script | status | minutes | message |
 |---|---|---|---|---|
-| 00 | R/00_audit.R | ok | 0.9 |  |
-| 01 | R/01_expression.R | ok | 7.2 |  |
+| 00 | R/00_audit.R | ok | 0.2 |  |
+| 01 | R/01_expression.R | ok | 0.6 |  |
 | 02 | R/02_differential_expression.R | ok | 0.1 |  |
 | 03 | R/03_modules_enrichment.R | ok | 0.7 |  |
 | 04 | R/04_novel_genes.R | ok | 0.1 |  |
-| 10 | R/10_gwas.R | ok | 9.2 |  |
-| 11 | R/11_twas.R | ok | 2.9 |  |
-| 12 | R/12_coloc.R | ok | 8 |  |
+| 10 | R/10_gwas.R | ok | 0.7 |  |
+| 11 | R/11_twas.R | ok | 0.8 |  |
+| 12 | R/12_coloc.R | ok | 1.8 |  |
 | 13 | R/13_replication.R | ok | 0 |  |
 | 20 | R/20_integration.R | ok | 0 |  |
-| 21 | R/21_benchmark.R | ok | 0.9 |  |
+| 21 | R/21_benchmark.R | ok | 1.4 |  |
 
 ## 1. Data audit
 
@@ -296,7 +296,7 @@ GWAS GCST90018865: lambda_GC = 1.012; 0 variants at p<5e-8; loci defined as **in
 
 ### Colocalisation
 
-131 locus-gene-tissue tests; 2 with PP.H4 > 0.5 (shared causal variant): HLA-C (GTEx_v10_whole_blood), HLA-C (BLUEPRINT_CD4_T_cell). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 2 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
+134 locus-gene-tissue tests; 2 with PP.H4 > 0.5 (shared causal variant): HLA-C (GTEx_v10_whole_blood), HLA-C (BLUEPRINT_CD4_T_cell). **[auto]** All of them lie in the MHC, where extreme LD and HLA allelic diversity make single-variant colocalisation unreliable; they are reported but should not be read as causal-gene evidence without HLA-specific fine-mapping. **[auto]** 0 of these 2 pass the credibility check (best GWAS p among the shared SNPs < 1e-05); only credible results count towards filter F4.
 
 | locus | chr | lead_rsid | lead_p | mhc | eqtl_dataset | gene_id | nsnps | gwas_min_p_shared | credible | PP.H0 | PP.H1 | PP.H2 | PP.H3 | PP.H4 | top_snp | top_snp_PP4 | risk_allele_raises_expression | symbol |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|

@@ -4,8 +4,8 @@ test	n_universe	n_set	n_overlap	expected	odds_ratio	p	direction
 "Fisher overlap: top 1% TWAS genes (too few F4 genes) vs F3"	10391	104	2	3.44	0.570195367455343	0.863777039478938	NA
 "cameraPR: top 1% TWAS genes (too few F4 genes) in F1"	8119	83	NA	NA	NA	0.602876666160285	"Down"
 "cameraPR: top 1% TWAS genes (too few F4 genes) in F2"	10391	104	NA	NA	NA	0.826326044337095	"Up"
-"cameraPR: top 1% TWAS genes (too few F4 genes) in F3"	10391	104	NA	NA	NA	0.189988735258268	"Up"
+"cameraPR: top 1% TWAS genes (too few F4 genes) in F3"	10391	104	NA	NA	NA	0.189988735258267	"Up"
 "Spearman TWAS z vs t F1"	8119	NA	NA	NA	0.0196235068171385	0.0770469025144121	NA
 "Spearman TWAS z vs t F2"	10391	NA	NA	NA	0.0173113447783887	0.07763546051641	NA
 "Spearman TWAS z vs t F3"	10391	NA	NA	NA	0.020047401394032	0.0410013343767752	NA
-"A priori: F2 BH-FDR<0.1 within top 1% TWAS genes (too few F4 genes)"	104	104	8	NA	NA	0.0507902495734433	NA
+"A priori: F2 BH-FDR<0.1 within top 1% TWAS genes (too few F4 genes)"	104	104	8	NA	NA	0.050790249573443	NA

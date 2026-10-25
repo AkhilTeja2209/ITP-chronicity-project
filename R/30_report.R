@@ -95,6 +95,12 @@ L <- c(
                                   sum(hits$credible), nrow(hits), cfg$coloc$min_gwas_p_shared) else "")
   } else "",
   "", tbl("coloc_results", max_rows = 20), "", fig("coloc_top_loci"), "",
+  "### Replication GWAS", "",
+  if (file.exists(file.path(RES, "tables", "replication_summary.tsv"))) paste(
+    "The replication GWAS overlaps the discovery meta-analysis (GCST90018865 includes an earlier FinnGen release),",
+    "so agreement is partly expected and is not independent replication.") else
+    "Not run: provide the replication file's download link as the repository secret `REPLICATION_GWAS_URL`.",
+  "", tbl("replication_summary"), "", tbl("replication_loci"), "",
   "## 4. Integration", "",
   "Formal tests of whether genetic evidence and chronicity expression converge more than chance:", "",
   tbl("integration_tests"), "",

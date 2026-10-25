@@ -5,25 +5,12 @@
 # (Barbeira et al. 2018 Nat Commun). Implemented directly to avoid the MetaXcan Python 2-era stack.
 
 source("R/utils.R")
-suppressPackageStartupMessages({ library(DBI); library(RSQLite) })
+source("R/twas_lib.R")
 
 gw <- load_rds("gwas")
 gene_lookup <- load_rds("gene_lookup")
-twas_dir <- file.path(DATA, "twas")
-tarball <- download_once(cfg$twas$url, file.path(twas_dir, "mashr_eqtl.tar"))
-members <- untar(tarball, list = TRUE)
-want <- grep(paste0("mashr_", cfg$twas$tissue, "\\.(db|txt\\.gz)$"), members, value = TRUE)
-if (length(want) != 2) stop("Tissue model files not found in tarball: ", cfg$twas$tissue)
-if (!all(file.exists(file.path(twas_dir, want)))) untar(tarball, files = want, exdir = twas_dir)
-db_file <- file.path(twas_dir, grep("\\.db$", want, value = TRUE))
-cov_file <- file.path(twas_dir, grep("\\.txt\\.gz$", want, value = TRUE))
-
-con <- dbConnect(SQLite(), db_file)
-weights <- as.data.table(dbGetQuery(con, "SELECT gene, varID, ref_allele, eff_allele, weight FROM weights"))
-extra <- as.data.table(dbGetQuery(con, "SELECT * FROM extra"))
-dbDisconnect(con)
-weights[, c("chr", "pos") := tstrsplit(sub("^chr", "", varID), "_", keep = 1:2)]
-weights[, pos := as.integer(pos)]
+models <- load_twas_models()
+weights <- models$weights; extra <- models$extra; twas_dir <- models$dir
 msg("TWAS models: ", uniqueN(weights$gene), " genes, ", uniqueN(weights$varID), " SNPs")
 
 # Extract only model SNP positions from the full GWAS file
@@ -37,33 +24,8 @@ g <- fread(cmd = cmd, sep = "\t", header = TRUE, na.strings = c("NA", ""))
 g <- g[is.finite(beta) & is.finite(standard_error) & standard_error > 0]
 g[, `:=`(chr = as.character(chromosome), pos = base_pair_location, z = beta / standard_error)]
 
-# Allele alignment: model eff_allele must match GWAS effect_allele (flip sign if swapped)
-m <- merge(weights, g[, .(chr, pos, effect_allele, other_allele, z)], by = c("chr", "pos"), allow.cartesian = TRUE)
-m[, sign := fifelse(effect_allele == eff_allele & other_allele == ref_allele, 1,
-                    fifelse(effect_allele == ref_allele & other_allele == eff_allele, -1, NA_real_))]
-m <- m[!is.na(sign)][, z := z * sign]
-m <- unique(m, by = c("gene", "varID"))
-
-covs <- fread(cov_file)
-setnames(covs, c("GENE", "RSID1", "RSID2", "VALUE"))
-covs <- covs[GENE %in% unique(m$gene)]
-cov_by_gene <- split(covs, by = "GENE", keep.by = FALSE)
-m_by_gene <- split(m, by = "gene")
+res <- twas_gene_z(models, g)
 n_model <- weights[, .N, by = gene]
-
-res <- rbindlist(lapply(names(m_by_gene), function(gn) {
-  d <- m_by_gene[[gn]]; cv <- cov_by_gene[[gn]]
-  if (is.null(cv)) return(NULL)
-  ids <- d$varID
-  S <- matrix(0, length(ids), length(ids), dimnames = list(ids, ids))
-  cv <- cv[RSID1 %in% ids & RSID2 %in% ids]
-  S[cbind(cv$RSID1, cv$RSID2)] <- cv$VALUE
-  S[cbind(cv$RSID2, cv$RSID1)] <- cv$VALUE
-  sd_l <- sqrt(pmax(diag(S), 0)); var_g <- drop(t(d$weight) %*% S %*% d$weight)
-  if (!is.finite(var_g) || var_g <= 0) return(NULL)
-  zg <- sum(d$weight * sd_l * d$z) / sqrt(var_g)
-  data.table(model_gene = gn, z = zg, n_snps_used = nrow(d))
-}))
 res[, gene_id := sub("\\..*", "", model_gene)]
 res[n_model, n_snps_model := i.N, on = c(model_gene = "gene")]
 res[, p := 2 * pnorm(-abs(z))]

@@ -15,6 +15,7 @@ steps <- list(
   "10" = list(file = "R/10_gwas.R",                  needs = "01"),   # needs gene coordinates from 01
   "11" = list(file = "R/11_twas.R",                  needs = "10"),
   "12" = list(file = "R/12_coloc.R",                 needs = "10"),
+  "13" = list(file = "R/13_replication.R",           needs = c("10", "11")),
   "20" = list(file = "R/20_integration.R",           needs = "02"),
   "21" = list(file = "R/21_benchmark.R",             needs = "02"))
 

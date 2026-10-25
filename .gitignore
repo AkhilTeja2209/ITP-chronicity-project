@@ -7,3 +7,5 @@ deck/node_modules/
 *.tbi
 deck/
 docs/*.pptx
+local/data/
+local/output/

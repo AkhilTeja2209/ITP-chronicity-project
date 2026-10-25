@@ -56,9 +56,21 @@ gwas:
   fallback_p: 1.0e-5
   window_kb: 500
   min_maf: 0.005
-  # Placeholder (not yet used by the code): second GWAS for replication, e.g. the FinnGen R12 ITP
-  # endpoint once the FinnGen access form is approved.
-  replication_url: ""
+  # Second GWAS for replication (step 13). Its download URL is read from the GitHub secret named
+  # in url_env, so the link FinnGen emails you never appears in this public repository.
+  # The column names below are FinnGen's summary-statistics format (GRCh38; effect allele = alt).
+  replication:
+    url_env: REPLICATION_GWAS_URL
+    label: FinnGen R12 ITP endpoint
+    overlaps_discovery: true    # GCST90018865 already includes an earlier FinnGen release
+    columns:
+      chromosome: "#chrom"
+      position: pos
+      effect_allele: alt
+      other_allele: ref
+      beta: beta
+      se: sebeta
+      p: pval
 
 eqtl:
   # eQTL Catalogue (r8) full summary statistics, queried by region with tabix
